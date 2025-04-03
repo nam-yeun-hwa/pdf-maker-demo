@@ -36,9 +36,11 @@ export const pdfFileToImage = async (
   };
 };
 
-export const getImageByFile = async (
-  file: File
-): Promise<string | undefined> => {
+/**
+ * @function getImageByFile
+ * @description pdd파일을 이미지로 전달
+ */
+export const getImageByFile = async (file: File): Promise<string | undefined> => {
   const result = await pdfFileToImage(file);
 
   return result.image;

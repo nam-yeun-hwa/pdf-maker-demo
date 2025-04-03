@@ -1,6 +1,6 @@
-import A from "./components/A";
-import B from "./components/B";
-import StampUploader from "./components/StampUploader";
+import PDFStampComponent from "@/components/PDFStampComponent";
+import SelectedPdfCanvas from "@/components/SelectedPdfCanvas";
+import PdfThumbnailViewer from "@/components/PdfThumbnailViewer";
 
 import "@/assets/css/App.css";
 
@@ -8,9 +8,9 @@ function App() {
   return (
     <div id="app">
       <div>
-        <A />
-        <B />
-        <StampUploader />
+        <PDFStampComponent />
+        <SelectedPdfCanvas />
+        <PdfThumbnailViewer />
       </div>
     </div>
   );

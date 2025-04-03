@@ -4,9 +4,9 @@
     "baseUrl": "./src",
     "strict": true, // 모든 엄격한 타입 체크 활성화
     "noImplicitAny": true, // 암묵적 'any' 타입 금지
-    "strictNullChecks": true, // null/undefined 엄격 체크
-    "noUnusedLocals": true, // 사용하지 않는 변수 경고
-    "noUnusedParameters": true // 사용하지 않는 매개변수 경고
+    "strictNullChecks": true // null/undefined 엄격 체크
+    // "noUnusedLocals": true, // 사용하지 않는 변수 경고
+    // "noUnusedParameters": true // 사용하지 않는 매개변수 경고
   },
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

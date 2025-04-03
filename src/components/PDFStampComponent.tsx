@@ -1,11 +1,11 @@
 import { useRef } from "react";
-import { useStore } from "@/store/store";
+import { usePdfStore } from "@/store/pdfStore";
 
 import "@/assets/css/A.css";
 import Stamp1 from "@/assets/images/stamp/stamp-1.jpg";
 
 const PDFStampComponent = () => {
-  const { file, setFile } = useStore();
+  const { file, setFile } = usePdfStore();
 
   const stampInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
@@ -14,8 +14,7 @@ const PDFStampComponent = () => {
     const pdfFile = e.target.files?.[0];
 
     setFile(pdfFile!);
-    console.log("handlePDFChange", pdfFile);
-    console.log("handlePDFChange", file);
+    // console.log("handlePDFChange", pdfFile);
 
     e.target.value = "";
   };
