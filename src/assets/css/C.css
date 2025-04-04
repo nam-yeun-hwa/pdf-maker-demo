@@ -68,3 +68,11 @@
   overflow-y: scroll;
   height: calc(100% - 40px);
 }
+
+.thumbnail-item {
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: auto;
+}

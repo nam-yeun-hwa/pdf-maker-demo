@@ -54,7 +54,7 @@ const PdfThumbnailViewer: React.FC = () => {
         for (let pageNum = 1; pageNum <= numPages; pageNum++) {
           const page: pdfjsLib.PDFPageProxy = await pdf.getPage(pageNum);
 
-          const viewport: PageViewport = page.getViewport({ scale: 0.5 });
+          const viewport: PageViewport = page.getViewport({ scale: 1 });
 
           const canvas: HTMLCanvasElement = document.createElement("canvas");
           const context: CanvasRenderingContext2D | null = canvas.getContext("2d");

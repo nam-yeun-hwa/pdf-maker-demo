@@ -1,25 +1,22 @@
 import * as fabric from "fabric";
 import React, { useEffect, useRef } from "react";
 
-// import { getImageByFile } from "../utils/utils";
 import "@/assets/css/B.css";
 import { useSelectedPdfStore } from "@/store/selectedPdfStore";
-
-const FABRIC_CANVAS_WIDTH = 500;
-const FABRIC_CANVAS_HEIGHT = parseFloat((FABRIC_CANVAS_WIDTH * Math.sqrt(2)).toFixed(2));
 
 const SelectedPdfCanvas = () => {
   const { imgPath } = useSelectedPdfStore();
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
 
   useEffect(() => {
-    if (canvasRef.current && !fabricCanvasRef.current) {
-      console.log("Initializing Fabric Canvas");
+    if (canvasRef.current && !fabricCanvasRef.current && containerRef.current) {
+      console.log("canvasRef.current.offsetWidth:", canvasRef.current.offsetWidth);
       fabricCanvasRef.current = new fabric.Canvas(canvasRef.current, {
-        width: 400,
-        height: 400,
+        width: containerRef.current.offsetWidth,
+        height: containerRef.current.offsetHeight,
         backgroundColor: "#f0f0f0",
       });
     } else if (!canvasRef.current) {
@@ -27,7 +24,7 @@ const SelectedPdfCanvas = () => {
     }
 
     const fabricCanvas = fabricCanvasRef.current;
-    if (fabricCanvas && imgPath) {
+    if (fabricCanvas && imgPath && containerRef.current) {
       // console.log("Attempting to load image from:", imgPath);
       fabricCanvas.clear();
 
@@ -36,14 +33,16 @@ const SelectedPdfCanvas = () => {
         return;
       }
 
+      const FABRIC_CANVAS_WIDTH = containerRef.current?.offsetWidth - 20;
+
       const imgElement = new Image();
       imgElement.src = imgPath;
       imgElement.onload = () => {
         console.log("HTML Image loaded successfully");
         const fabricImg = new fabric.FabricImage(imgElement);
         console.log("Fabric Image created:", fabricImg);
-        fabricImg.scaleToWidth(300);
-        fabricImg.set({ left: 50, top: 50 });
+        fabricImg.scaleToWidth(FABRIC_CANVAS_WIDTH);
+        fabricImg.set({ left: 10, top: 10 });
         fabricCanvas.add(fabricImg);
         fabricCanvas.renderAll();
       };
@@ -56,7 +55,7 @@ const SelectedPdfCanvas = () => {
   }, [imgPath]);
 
   return (
-    <div className="B" style={{ backgroundColor: "blue" }}>
+    <div ref={containerRef} className="B" style={{ backgroundColor: "blue" }}>
       <div>
         <canvas ref={canvasRef} />
 
