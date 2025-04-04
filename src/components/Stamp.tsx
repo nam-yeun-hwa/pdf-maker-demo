@@ -1,5 +1,5 @@
 import { useStampStore } from "@/store/stampStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as fabric from "fabric";
 import styled from "@emotion/styled";
 
@@ -43,7 +43,7 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
   const { fabricCanvasRef } = useStampStore();
   // const [isActive, setIsActive] = useState(false); // 자체적으로 isActive 상태 관리
   // const stampRef = useRef<fabric.Image | null>(null);
-  const [stamp, setStamps] = useState<fabric.Group[]>([]); // 도장 배열 관리
+  // const [stamp, setStamps] = useState<fabric.Group[]>([]); // 도장 배열 관리
   const [clickCount, setClickCount] = useState(0); // 클릭 횟수 추적 (제한 없음, 표시용)
 
   const addStamp = () => {
@@ -51,8 +51,10 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
 
     const imgElement = new Image();
     imgElement.src = stampUrl;
+    // imgElement.width = 100;
     imgElement.onload = () => {
       const img = new fabric.FabricImage(imgElement);
+      img.scaleToWidth(100);
       img.set({
         left: 0,
         top: 0,
@@ -65,6 +67,8 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
         originX: "center",
         originY: "center",
         hoverCursor: "pointer",
+        scaleX: 1, // 스케일 보정 제거 (고정 크기)
+        scaleY: 1, // 스케일 보정 제거 (고정 크기)
       });
 
       const deleteText = new fabric.Text("X", {
@@ -73,6 +77,8 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
         originX: "center",
         originY: "center",
         evented: false, // 마우스 이벤트 비활성화
+        scaleX: 1, // 스케일 보정 제거 (고정 크기)
+        scaleY: 1, // 스케일 보정 제거 (고정 크기)
       });
 
       const imgWidth = img.getScaledWidth();
@@ -95,7 +101,7 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
       group.on("mousedown", (e) => {
         if (e.subTargets && e.subTargets.includes(deleteButton)) {
           fabricCanvasRef.remove(group);
-          setStamps((prev) => prev.filter((s) => s !== group));
+          // setStamps((prev) => prev.filter((s) => s !== group));
           fabricCanvasRef.renderAll();
         }
       });
@@ -109,7 +115,7 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
       });
 
       fabricCanvasRef.add(group);
-      setStamps((prev) => [...prev, group]);
+      // setStamps((prev) => [...prev, group]);
       setClickCount((prev) => prev + 1);
       fabricCanvasRef.renderAll();
     };
