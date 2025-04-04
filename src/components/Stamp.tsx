@@ -43,7 +43,7 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
   const { fabricCanvasRef } = useStampStore();
   // const [isActive, setIsActive] = useState(false); // 자체적으로 isActive 상태 관리
   // const stampRef = useRef<fabric.Image | null>(null);
-  const [stamp, setStamps] = useState<fabric.Image[]>([]); // 도장 배열 관리
+  const [stamp, setStamps] = useState<fabric.Group[]>([]); // 도장 배열 관리
   const [clickCount, setClickCount] = useState(0); // 클릭 횟수 추적 (제한 없음, 표시용)
 
   const addStamp = () => {
@@ -52,15 +52,65 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
     const imgElement = new Image();
     imgElement.src = stampUrl;
     imgElement.onload = () => {
-      const fabricImg = new fabric.FabricImage(imgElement);
-      fabricImg.set({
+      const img = new fabric.FabricImage(imgElement);
+      img.set({
         left: 0,
         top: 0,
       });
 
-      fabricCanvasRef.add(fabricImg);
-      setStamps((prev) => [...prev, fabricImg]); // 도장 배열에 추가
-      setClickCount((prev) => prev + 1); // 클릭 횟수 증가 (제한 없음)
+      const deleteButton = new fabric.Rect({
+        width: 30,
+        height: 30,
+        fill: "#ff4d4d",
+        originX: "center",
+        originY: "center",
+        hoverCursor: "pointer",
+      });
+
+      const deleteText = new fabric.Text("X", {
+        fontSize: 16,
+        fill: "white",
+        originX: "center",
+        originY: "center",
+        evented: false, // 마우스 이벤트 비활성화
+      });
+
+      const imgWidth = img.getScaledWidth();
+      deleteButton.set({
+        left: imgWidth / 2 - 10,
+        top: -img.getScaledHeight() / 2 + 10,
+      });
+      deleteText.set({
+        left: imgWidth / 2 - 10,
+        top: -img.getScaledHeight() / 2 + 10,
+      });
+
+      const group = new fabric.Group([img, deleteButton, deleteText], {
+        left: 100 + (clickCount % 10) * 20,
+        top: 100 + Math.floor(clickCount / 10) * 20,
+        selectable: true,
+        subTargetCheck: true, // 하위 객체 클릭 감지 활성화
+      });
+
+      group.on("mousedown", (e) => {
+        if (e.subTargets && e.subTargets.includes(deleteButton)) {
+          fabricCanvasRef.remove(group);
+          setStamps((prev) => prev.filter((s) => s !== group));
+          fabricCanvasRef.renderAll();
+        }
+      });
+      deleteButton.on("mouseover", () => {
+        deleteButton.set({ fill: "#cc0000" });
+        fabricCanvasRef.renderAll();
+      });
+      deleteButton.on("mouseout", () => {
+        deleteButton.set({ fill: "#ff4d4d" });
+        fabricCanvasRef.renderAll();
+      });
+
+      fabricCanvasRef.add(group);
+      setStamps((prev) => [...prev, group]);
+      setClickCount((prev) => prev + 1);
       fabricCanvasRef.renderAll();
     };
     imgElement.onerror = (err) => {
@@ -102,7 +152,7 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
       <RemoveButton
         onClick={(e) => {
           e.stopPropagation();
-          handleRemove();
+          removeStampHandler(index);
         }}
       >
         삭제
