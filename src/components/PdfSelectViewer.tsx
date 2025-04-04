@@ -42,7 +42,18 @@ const PdfSelectViewer = () => {
         const fabricImg = new fabric.FabricImage(imgElement);
         console.log("Fabric Image created:", fabricImg);
         fabricImg.scaleToWidth(FABRIC_CANVAS_WIDTH);
-        fabricImg.set({ left: 10, top: 10 });
+        fabricImg.set({
+          left: 10,
+          top: 10,
+          selectable: false, // 선택 불가능 (마우스로 드래그/선택 불가)
+          lockMovementX: true, // X축 이동 잠금
+          lockMovementY: true, // Y축 이동 잠금
+          lockRotation: true, // 회전 잠금
+          lockScalingX: true, // X축 크기 조정 잠금
+          lockScalingY: true, // Y축 크기 조정 잠금
+          hasControls: false, // 컨트롤 핸들 비활성화
+          hasBorders: false, // 테두리 비활성화
+        });
         fabricCanvas.add(fabricImg);
         fabricCanvas.renderAll();
       };

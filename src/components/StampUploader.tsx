@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import Stamp from "./layout/Stamp";
+import Stamp from "@/components/Stamp";
 
 const StampUploader: React.FC = () => {
   const [stampsView, setStampsView] = useState<string[]>([]);
