@@ -1,5 +1,5 @@
 import * as fabric from "fabric";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import "@/assets/css/B.css";
 import { useSelectedPdfStore } from "@/store/selectedPdfStore";
@@ -34,13 +34,14 @@ const PdfSelectViewer = () => {
       }
 
       const FABRIC_CANVAS_WIDTH = containerRef.current?.offsetWidth - 20;
-
+      console.log("sfsdf", "596", containerRef.current?.offsetWidth - 20);
       const imgElement = new Image();
       imgElement.src = imgPath;
       imgElement.onload = () => {
-        console.log("HTML Image loaded successfully");
         const fabricImg = new fabric.FabricImage(imgElement);
         console.log("Fabric Image created:", fabricImg);
+        console.log(imgElement.width, imgElement.height);
+
         fabricImg.scaleToWidth(FABRIC_CANVAS_WIDTH);
         fabricImg.set({
           left: 10,
@@ -54,7 +55,9 @@ const PdfSelectViewer = () => {
           hasControls: false, // 컨트롤 핸들 비활성화
           hasBorders: false, // 테두리 비활성화
         });
+        console.log(fabricImg);
         fabricCanvas.add(fabricImg);
+        fabricCanvas.setHeight(imgElement.height * 1.6);
         fabricCanvas.renderAll();
       };
       imgElement.onerror = (err) => {
@@ -66,7 +69,11 @@ const PdfSelectViewer = () => {
   }, [imgPath]);
 
   return (
-    <div ref={containerRef} className="B" style={{ backgroundColor: "blue" }}>
+    <div
+      ref={containerRef}
+      className="B"
+      style={{ backgroundColor: "blue", display: "flex", alignItems: "flex-start", overflow: "scroll" }}
+    >
       <div>
         <canvas ref={canvasRef} />
 
