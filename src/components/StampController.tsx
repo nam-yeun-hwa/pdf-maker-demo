@@ -2,26 +2,23 @@ import { useRef } from "react";
 import { usePdfStore } from "@/store/pdfStore";
 
 import "@/assets/css/A.css";
-import Stamp1 from "@/assets/images/stamp/stamp-1.jpg";
+import StampUploader from "@/components/StampUploader";
 
-const PDFStampComponent = () => {
+const StampController = () => {
   const { file, setFile } = usePdfStore();
 
-  const stampInputRef = useRef<HTMLInputElement>(null);
+  // const stampInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
 
   const handlePDFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const pdfFile = e.target.files?.[0];
-
     setFile(pdfFile!);
-    // console.log("handlePDFChange", pdfFile);
-
     e.target.value = "";
   };
 
-  const handleStampUpload = () => {
-    stampInputRef.current?.click();
-  };
+  // const handleStampUpload = () => {
+  //   stampInputRef.current?.click();
+  // };
 
   const handlePDFUpload = () => {
     pdfInputRef.current?.click();
@@ -34,17 +31,18 @@ const PDFStampComponent = () => {
   const handleStampDraw = async () => {};
 
   return (
-    <div className="A" style={{ backgroundColor: "red" }}>
+    <div className="A">
       <div className="top">
         <div>
-          A
+          {/* pdf 업로드 버튼 : s */}
           <div className="pdfUpload">
             <input ref={pdfInputRef} type="file" onChange={handlePDFChange} style={{ display: "none" }} />
-
             <button type="button" onClick={handlePDFUpload}>
               PDF 업로드
             </button>
           </div>
+          {/* pdf 업로드 버튼 : e */}
+          {/* pdfFile 정보 : s */}
           <div className="pdfFile">
             {!!file?.name && (
               <>
@@ -55,20 +53,9 @@ const PDFStampComponent = () => {
               </>
             )}
           </div>
+          {/* pdfFile 정보 : e */}
         </div>
-
-        <div>
-          <div className="stampUpload">
-            <input ref={stampInputRef} type="file" accept=".png" onChange={() => {}} style={{ display: "none" }} />
-            <button type="button" onClick={handleStampUpload}>
-              도장 업로드
-            </button>
-          </div>
-
-          <div className="stamps">
-            <img src={Stamp1} />
-          </div>
-        </div>
+        <StampUploader />
       </div>
 
       <div className="bottom">
@@ -80,4 +67,4 @@ const PDFStampComponent = () => {
   );
 };
 
-export default PDFStampComponent;
+export default StampController;

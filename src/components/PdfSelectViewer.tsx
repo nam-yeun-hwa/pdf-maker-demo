@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 import "@/assets/css/B.css";
 import { useSelectedPdfStore } from "@/store/selectedPdfStore";
 
-const SelectedPdfCanvas = () => {
+const PdfSelectViewer = () => {
   const { imgPath } = useSelectedPdfStore();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -67,4 +67,4 @@ const SelectedPdfCanvas = () => {
   );
 };
 
-export default SelectedPdfCanvas;
+export default PdfSelectViewer;

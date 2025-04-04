@@ -1,5 +1,5 @@
-import PDFStampComponent from "@/components/PDFStampComponent";
-import SelectedPdfCanvas from "@/components/SelectedPdfCanvas";
+import StampController from "@/components/StampController";
+import PdfSelectViewer from "@/components/PdfSelectViewer";
 import PdfThumbnailViewer from "@/components/PdfThumbnailViewer";
 
 import "@/assets/css/App.css";
@@ -8,8 +8,8 @@ function App() {
   return (
     <div id="app">
       <div>
-        <PDFStampComponent />
-        <SelectedPdfCanvas />
+        <StampController />
+        <PdfSelectViewer />
         <PdfThumbnailViewer />
       </div>
     </div>

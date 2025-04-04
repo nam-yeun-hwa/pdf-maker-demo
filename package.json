@@ -13,6 +13,7 @@
     "axios": "^1.8.4",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.7",
+    "fabric": "^6.6.2",
     "mime": "^4.0.6",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.1.91",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/crypto-js": "^4.2.2",
+    "@types/fabric": "^5.3.10",
     "@types/node": "^22.13.14",
     "@types/pdfjs-dist": "^2.10.378",
     "@types/react": "^19.0.10",
