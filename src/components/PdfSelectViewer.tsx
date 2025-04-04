@@ -3,9 +3,11 @@ import { useEffect, useRef } from "react";
 
 import "@/assets/css/B.css";
 import { useSelectedPdfStore } from "@/store/selectedPdfStore";
+import { useStampStore } from "@/store/stampStore";
 
 const PdfSelectViewer = () => {
   const { imgPath } = useSelectedPdfStore();
+  const { setfabricCanvasRef } = useStampStore();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -25,7 +27,7 @@ const PdfSelectViewer = () => {
 
     const fabricCanvas = fabricCanvasRef.current;
     if (fabricCanvas && imgPath && containerRef.current) {
-      // console.log("Attempting to load image from:", imgPath);
+      setfabricCanvasRef(fabricCanvas);
       fabricCanvas.clear();
 
       if (!imgPath.startsWith("data:image/")) {
@@ -34,13 +36,10 @@ const PdfSelectViewer = () => {
       }
 
       const FABRIC_CANVAS_WIDTH = containerRef.current?.offsetWidth - 20;
-      console.log("sfsdf", "596", containerRef.current?.offsetWidth - 20);
       const imgElement = new Image();
       imgElement.src = imgPath;
       imgElement.onload = () => {
         const fabricImg = new fabric.FabricImage(imgElement);
-        console.log("Fabric Image created:", fabricImg);
-        console.log(imgElement.width, imgElement.height);
 
         fabricImg.scaleToWidth(FABRIC_CANVAS_WIDTH);
         fabricImg.set({
@@ -55,8 +54,9 @@ const PdfSelectViewer = () => {
           hasControls: false, // 컨트롤 핸들 비활성화
           hasBorders: false, // 테두리 비활성화
         });
-        console.log(fabricImg);
+        // console.log(fabricImg);
         fabricCanvas.add(fabricImg);
+        // fabricCanvas.setWidth(FABRIC_CANVAS_WIDTH);
         fabricCanvas.setHeight(imgElement.height * 1.6);
         fabricCanvas.renderAll();
       };
