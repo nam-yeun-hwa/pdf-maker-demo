@@ -9,41 +9,8 @@ interface StampType {
   removeStampHandler: (index: number) => void;
 }
 
-const StampContainer = styled.div`
-  position: relative;
-  margin: 10px;
-  text-align: center;
-  border: "1px solid gray";
-  padding: 5px;
-  cursor: pointer;
-`;
-
-const RemoveButton = styled.button`
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 2px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #cc0000;
-  }
-`;
-
-const StampImage = styled.img`
-  max-width: 80px;
-  height: auto;
-`;
-
 const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => {
   const { fabricCanvasRef } = useStampStore();
-  // const [isActive, setIsActive] = useState(false); // 자체적으로 isActive 상태 관리
-  // const stampRef = useRef<fabric.Image | null>(null);
-  // const [stamp, setStamps] = useState<fabric.Group[]>([]); // 도장 배열 관리
   const [clickCount, setClickCount] = useState(0); // 클릭 횟수 추적 (제한 없음, 표시용)
 
   const addStamp = () => {
@@ -51,7 +18,6 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
 
     const imgElement = new Image();
     imgElement.src = stampUrl;
-    // imgElement.width = 100;
     imgElement.onload = () => {
       const img = new fabric.FabricImage(imgElement);
       img.scaleToWidth(100);
@@ -169,19 +135,32 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
 
 export default Stamp;
 
-// <div
-// key={index}
-// style={{ position: "relative", margin: "10px", textAlign: "center" }}
-// onClick={() => setIsActive(!isActive)}
-// >
-// <img src={stampUrl} alt={`Stamp ${index + 1}`} style={{ maxWidth: "80px", height: "auto" }} />
-// <button
-// onClick={(e) => {
-// 	e.stopPropagation();
-// 	removeStampHandler(index);
-// }}
-// 	style={{ position: "absolute", bottom: "5px", right: "10px" }}
-// >
-// 	삭제
-// </button>
-// </div>
+const StampContainer = styled.div`
+  position: relative;
+  margin: 10px;
+  text-align: center;
+  border: "1px solid gray";
+  padding: 5px;
+  cursor: pointer;
+`;
+
+const RemoveButton = styled.button`
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #cc0000;
+  }
+`;
+
+const StampImage = styled.img`
+  max-width: 80px;
+  height: auto;
+`;

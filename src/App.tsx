@@ -6,8 +6,8 @@ import "@/assets/css/App.css";
 
 function App() {
   return (
-    <div id="app">
-      <div>
+    <div id="app" className="app-root">
+      <div className="content-wrapper">
         <StampController />
         <PdfSelectViewer />
         <PdfThumbnailViewer />

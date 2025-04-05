@@ -11,7 +11,7 @@
 .A .top {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 10px;
 }
 
 .A .top .stampUpload {
@@ -34,10 +34,6 @@
   border-radius: 4px;
 }
 
-.A .top .pdfUpload {
-  min-height: 48px;
-}
-
 .A .top .pdfFile {
   min-height: 48px;
 }
@@ -49,12 +45,12 @@
   gap: 12px;
 }
 
-.A button {
+/* .A button {
   padding: 8px 12px;
   border-radius: 12px;
 
   background-color: #5e5e5e;
-}
+} */
 
 .A button.pdfFileRemove {
   padding: 4px 8px;

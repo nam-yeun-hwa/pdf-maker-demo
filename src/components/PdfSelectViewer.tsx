@@ -57,7 +57,7 @@ const PdfSelectViewer = () => {
         // console.log(fabricImg);
         fabricCanvas.add(fabricImg);
         // fabricCanvas.setWidth(FABRIC_CANVAS_WIDTH);
-        fabricCanvas.setHeight(imgElement.height * 1.6);
+        fabricCanvas.setHeight(FABRIC_CANVAS_WIDTH * 1.4);
         fabricCanvas.renderAll();
       };
       imgElement.onerror = (err) => {
