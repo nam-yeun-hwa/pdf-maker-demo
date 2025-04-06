@@ -6,7 +6,6 @@ interface PdfPathType {
   setImgPath: (path: string) => void;
 }
 
-// devtools를 적용한 스토어 생성
 export const useSelectedPdfStore = create<PdfPathType>()(
   devtools((set) => ({
     imgPath: "",

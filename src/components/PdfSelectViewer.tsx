@@ -3,11 +3,11 @@ import { useEffect, useRef } from "react";
 
 import "@/assets/css/B.css";
 import { useSelectedPdfStore } from "@/store/selectedPdfStore";
-import { useStampStore } from "@/store/stampStore";
+import { useCanvasStore } from "@/store/canvasStore";
 
 const PdfSelectViewer = () => {
   const { imgPath } = useSelectedPdfStore();
-  const { setfabricCanvasRef } = useStampStore();
+  const { setfabricCanvasRef, setCanvasRef } = useCanvasStore();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -15,12 +15,12 @@ const PdfSelectViewer = () => {
 
   useEffect(() => {
     if (canvasRef.current && !fabricCanvasRef.current && containerRef.current) {
-      console.log("canvasRef.current.offsetWidth:", canvasRef.current.offsetWidth);
       fabricCanvasRef.current = new fabric.Canvas(canvasRef.current, {
         width: containerRef.current.offsetWidth,
         height: containerRef.current.offsetHeight,
         backgroundColor: "#f0f0f0",
       });
+      setCanvasRef(canvasRef.current);
     } else if (!canvasRef.current) {
       console.error("Canvas element is not available");
     }
@@ -54,9 +54,7 @@ const PdfSelectViewer = () => {
           hasControls: false, // 컨트롤 핸들 비활성화
           hasBorders: false, // 테두리 비활성화
         });
-        // console.log(fabricImg);
         fabricCanvas.add(fabricImg);
-        // fabricCanvas.setWidth(FABRIC_CANVAS_WIDTH);
         fabricCanvas.setHeight(FABRIC_CANVAS_WIDTH * 1.4);
         fabricCanvas.renderAll();
       };
@@ -69,17 +67,9 @@ const PdfSelectViewer = () => {
   }, [imgPath]);
 
   return (
-    <div
-      ref={containerRef}
-      className="B"
-      style={{ backgroundColor: "blue", display: "flex", alignItems: "flex-start", overflow: "scroll" }}
-    >
+    <div ref={containerRef} className="B" style={{ display: "flex", alignItems: "flex-start", overflow: "scroll" }}>
       <div>
         <canvas ref={canvasRef} />
-
-        {/* <button type="button" onClick={handlePDFDownload}>
-          PDF 다운로드
-        </button> */}
       </div>
     </div>
   );
