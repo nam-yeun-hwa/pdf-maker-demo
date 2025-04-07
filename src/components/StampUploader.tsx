@@ -9,18 +9,13 @@ const StampUploader: React.FC = () => {
 
   const handleStampUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
+
     if (files) {
       const newStamps = Array.from(files)
         .filter((file) => file.type === "image/png")
         .map((file) => URL.createObjectURL(file));
 
-      const remainingSlots = 5 - stampsView.length;
-      if (stampsView.length + newStamps.length > 5) {
-        alert(`최대 5개의 도장 이미지만 업로드할 수 있습니다. ${remainingSlots}개 더 업로드 가능합니다.`);
-        setStampsView([...stampsView, ...newStamps.slice(0, remainingSlots)]);
-      } else {
-        setStampsView([...stampsView, ...newStamps]);
-      }
+      setStampsView([...stampsView, ...newStamps]);
     }
   };
 
@@ -47,7 +42,13 @@ const StampUploader: React.FC = () => {
       {stampsView.length > 0 && (
         <PreviewSection>
           <Subtitle>업로드된 도장 이미지 ({stampsView.length}/5)</Subtitle>
-          <Subtitle color="red">도장 사진을 누르시면 도장이 찍힙니다.</Subtitle>
+          <Subtitle color="red"> - 도장 사진을 누르시면 도장이 찍힙니다.</Subtitle>
+          <Subtitle color="red">
+            <>
+              - PDF 미리보기 화면에서 도장을 <b style={{ color: "black" }}>더블클릭</b> 하시면
+              <b style={{ color: "black" }}>도장이 삭제</b> 됩니다.
+            </>
+          </Subtitle>
           <StampGrid>
             {stampsView.map((stampUrl, index) => (
               <Stamp key={index} index={index} stampUrl={stampUrl} removeStampHandler={removeViewStamp} />

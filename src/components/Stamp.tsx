@@ -25,15 +25,80 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
         top: 0,
       });
 
-      img.on("mousedblclick", () => {
-        fabricCanvasRef.remove(img); // 더블클릭 시 이미지 삭제
-        fabricCanvasRef.renderAll(); // 캔버스 갱신
+      const deleteButton = new fabric.Rect({
+        width: 30,
+        height: 30,
+        fill: "#ff4d4d",
+        originX: "center",
+        originY: "center",
+        hoverCursor: "pointer",
+        scaleX: 1, // 스케일 보정 제거 (고정 크기)
+        scaleY: 1, // 스케일 보정 제거 (고정 크기)
+        opacity: 0, // Initially hidden
       });
 
-      fabricCanvasRef.add(img);
-      // setStamps((prev) => [...prev, group]);
+      const deleteText = new fabric.Text("X", {
+        fontSize: 16,
+        fill: "white",
+        originX: "center",
+        originY: "center",
+        evented: false, // 마우스 이벤트 비활성화
+        scaleX: 1, // 스케일 보정 제거 (고정 크기)
+        scaleY: 1, // 스케일 보정 제거 (고정 크기)
+        opacity: 0, // Initially hidden
+      });
+
+      const imgWidth = img.getScaledWidth();
+      deleteButton.set({
+        left: imgWidth / 2 - 10,
+        top: -img.getScaledHeight() / 2 + 10,
+      });
+      deleteText.set({
+        left: imgWidth / 2 - 10,
+        top: -img.getScaledHeight() / 2 + 10,
+      });
+
+      deleteButton.on("mouseover", () => {
+        deleteButton.set({ fill: "#cc0000" });
+        fabricCanvasRef.renderAll();
+      });
+      deleteButton.on("mouseout", () => {
+        deleteButton.set({ fill: "#ff4d4d" });
+        fabricCanvasRef.renderAll();
+      });
+
+      const group = new fabric.Group([img, deleteButton, deleteText], {
+        left: 0,
+        top: 0,
+        selectable: true,
+        subTargetCheck: true, // 하위 객체 클릭 감지 활성화
+      });
+
+      group.on("mousedown", (e) => {
+        if (e.subTargets && e.subTargets.includes(deleteButton)) {
+          fabricCanvasRef.remove(group);
+          fabricCanvasRef.renderAll();
+        }
+      });
+
+      // 그룹에 마우스 오버 시 deleteButton과 deleteText 표시
+      group.on("mouseover", () => {
+        deleteButton.set({ opacity: 1 });
+        deleteText.set({ opacity: 1 });
+        fabricCanvasRef.renderAll();
+      });
+
+      // 그룹에서 마우스 아웃 시 deleteButton과 deleteText 숨김
+      group.on("mouseout", () => {
+        deleteButton.set({ opacity: 0 });
+        deleteText.set({ opacity: 0 });
+        fabricCanvasRef.renderAll();
+      });
+
+      fabricCanvasRef.add(group);
       fabricCanvasRef.renderAll();
     };
+
     imgElement.onerror = (err) => {
       console.error("Image load failed:", err);
     };
