@@ -1,8 +1,13 @@
 import React, { useState, ChangeEvent, useRef } from "react";
 import styled from "@emotion/styled";
 import Stamp from "@/components/Stamp";
-import FileUpload from "./common/FileUpload";
+import FileUpload from "@/components/common/FileUpload";
 
+/**
+ * @function StampUploader
+ * @description 사용자가 이미지 파일(스탬프)을 업로드할 수 있는 간단한 UI를 제공합니다.
+ * 업로드된 파일(스탬프)를 화면에 표시하며, 파일 선택 시 PDFViwer)에 스탬프가 표시됩니다. 스탬프는 중복이 되지 않으며 최대 5개까지 업로드가 가능합니다.
+ */
 const StampUploader: React.FC = () => {
   const [stampsView, setStampsView] = useState<string[]>([]);
   const stampInputRef = useRef<HTMLInputElement>(null);
@@ -43,12 +48,6 @@ const StampUploader: React.FC = () => {
         <PreviewSection>
           <Subtitle>업로드된 도장 이미지 ({stampsView.length}/5)</Subtitle>
           <Subtitle color="red"> - 도장 사진을 누르시면 도장이 찍힙니다.</Subtitle>
-          <Subtitle color="red">
-            <>
-              - PDF 미리보기 화면에서 도장을 <b style={{ color: "black" }}>더블클릭</b> 하시면
-              <b style={{ color: "black" }}>도장이 삭제</b> 됩니다.
-            </>
-          </Subtitle>
           <StampGrid>
             {stampsView.map((stampUrl, index) => (
               <Stamp key={index} index={index} stampUrl={stampUrl} removeStampHandler={removeViewStamp} />

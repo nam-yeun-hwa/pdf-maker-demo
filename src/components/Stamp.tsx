@@ -9,6 +9,10 @@ interface StampType {
   removeStampHandler: (index: number) => void;
 }
 
+/**
+ *@function Stamp
+ *@description 스탬프 ITEM 컴포넌트입니다. 중복으로 도장을 찍을수 있고 찍힌 도장에 마우스 오버 마우스 아웃에 따라 도장을 삭제 할수 있는 버튼이 화면에 나타나거나 없어집니다.
+ */
 const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => {
   const { fabricCanvasRef } = useCanvasStore();
 

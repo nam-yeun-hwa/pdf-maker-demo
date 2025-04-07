@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* max-width: 100%; */
   height: 100%;
   gap: 4px;
 }
@@ -11,13 +10,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   width: 100%;
-  /* min-width: 1512px; */
   min-width: 100%;
-  /* max-width: 1512px; */
   max-width: 100%;
-
+  /* max-width: 1512px; */
+  /* min-width: 1512px; */
   height: 100%;
   min-height: 752px;
   max-height: 752px;
@@ -25,32 +22,3 @@
   overflow: scroll;
   padding: 20px;
 }
-
-#app > div > div {
-  height: 100%;
-  background: #e9e9e9;
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-/* 전체 1490 */
-/* A : 280px */
-#app > div > div:nth-child(1) {
-  flex: 0 0 284px;
-  overflow: scroll;
-}
-
-/* B : 962px */
-#app > div > div:nth-child(2) {
-  flex: 0 0 calc(64.5637584% - 20px);
-}
-
-/* C : 250px */
-#app > div > div:nth-child(3) {
-  /* flex: 0 0 16.7785235%; */
-  min-width: 320px;
-  max-width: 320px;
-}
-
-/* 개발자 도구를 보면서 개발하려고 했는데 화면이 좌우 짤리고 스크롤이 되지 않아서 몇몇 부분 가능하도록 수정 되었습니다.
-참고 부탁 드립니다. */

@@ -1,10 +1,10 @@
 import { usePdfStore } from "@/store/pdfStore";
-import "@/assets/css/C.css";
 import React, { useState, useEffect } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import type { PageViewport } from "pdfjs-dist";
 import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { useSelectedPdfStore } from "@/store/selectedPdfStore";
+import styled from "@emotion/styled";
 // pdfjs worker 설정
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc; // 로컬 경로 설정
 
@@ -14,11 +14,14 @@ interface Thumbnail {
   url: string;
 }
 
+/**
+ * @function PdfThumbnailViewer
+ * @description 업로드한 PDF파일의 모든 페이지를 화면에 로드하여 리스트로 보여줍니다.
+ */
 const PdfThumbnailViewer: React.FC = () => {
   const [thumbnails, setThumbnails] = useState<Thumbnail[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  // const [selectedImage, setSelectedImage] = useState<string | null>(null); // 클릭한 이미지 저장
 
   const { file } = usePdfStore();
   const { setImgPath } = useSelectedPdfStore();
@@ -99,59 +102,76 @@ const PdfThumbnailViewer: React.FC = () => {
     }
   };
 
-  if (loading) return <div>썸네일 생성 중...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading)
+    return (
+      <Container>
+        <ErrorMsg>썸네일 생성 중...</ErrorMsg>
+      </Container>
+    );
+  if (error)
+    return (
+      <Container>
+        <ErrorMsg>{error}</ErrorMsg>
+      </Container>
+    );
 
   return (
-    <div className="C">
-      <div className="thumbnail-container">
-        <h2>PDF 페이지 썸네일</h2>
+    <Container>
+      <ThumbnailContainer>
         {thumbnails.length === 0 ? (
-          <p>썸네일이 없습니다.</p>
+          <ErrorMsg>썸네일이 없습니다.</ErrorMsg>
         ) : (
-          <div className="thumbnail-grid">
+          <ThumbnailGrid>
             {thumbnails.map((thumbnail) => (
-              <div key={thumbnail.pageNum} className="thumbnail-item" onClick={() => handleImageClick(thumbnail.url)}>
+              <ThumbnailImage key={thumbnail.pageNum} onClick={() => handleImageClick(thumbnail.url)}>
                 <img src={thumbnail.url} alt={`Page ${thumbnail.pageNum}`} className="thumbnail-image" />
                 <p>페이지 {thumbnail.pageNum}</p>
-              </div>
+              </ThumbnailImage>
             ))}
-          </div>
+          </ThumbnailGrid>
         )}
-      </div>
-    </div>
+      </ThumbnailContainer>
+    </Container>
   );
 };
 
 export default PdfThumbnailViewer;
 
-// 기존 백업 파일
-// const PdfThumbnailViewer = () => {
-//   const { file } = useStore();
-//   const [fileImage, setFileImage] = useState<string | null>(null);
+const Container = styled.div`
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  min-width: 320px;
+  max-width: 320px;
+  background: #e9e9e9;
+  overflow: hidden;
+  border-radius: 8px;
+  padding: 12px;
+`;
 
-//   useEffect(() => {
-//     if (!file) return;
+const ThumbnailContainer = styled.div`
+  height: 100%;
+`;
 
-//     (async () => {
-//       setFileImage((await getImageByFile(file)) ?? "");
-//     })();
-//   }, [file]);
+const ThumbnailGrid = styled.div`
+  height: 100%;
+  overflow-y: auto;
+`;
 
-//   return (
-//     <div className="C">
-//       <div className="top">
-//         {fileImage && (
-//           <div>
-//             <div className="image">
-//               <img src={fileImage} />
-//             </div>
-//             <div className="imageIndex">1</div>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
+const ThumbnailImage = styled.div`
+  img {
+    width: 100%;
+    height: auto;
+  }
+`;
 
-// export default PdfThumbnailViewer;
+const ErrorMsg = styled.h3<{ color?: string }>`
+  font-size: 16px;
+  font-weight: 400;
+  padding: 10px;
+  color: ${(props) => props.color || "#555"};
+`;
