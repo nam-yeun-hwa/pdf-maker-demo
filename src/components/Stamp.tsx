@@ -3,96 +3,120 @@ import * as fabric from "fabric";
 import styled from "@emotion/styled";
 import { useCanvasStore } from "@/store/canvasStore";
 
-interface StampType {
+interface StampProps {
   index: number;
   stampUrl: string;
   removeStampHandler: (index: number) => void;
 }
 
 /**
- *@function Stamp
- *@description 스탬프 ITEM 컴포넌트입니다. 중복으로 도장을 찍을수 있고 찍힌 도장에 마우스 오버 마우스 아웃에 따라 도장을 삭제 할수 있는 버튼이 화면에 나타나거나 없어집니다.
+ * @component Stamp
+ * 스탬프 아이템 컴포넌트로, 캔버스에 스탬프를 추가하고 관리합니다.
+ * - 클릭 시 캔버스에 스탬프 추가
+ * - 마우스 오버/아웃으로 캔버스 내 스탬프의 삭제 버튼 표시/숨김
+ * - Delete 키로 선택된 스탬프 제거
+ * - "삭제" 버튼으로 스탬프 목록에서 제거
+ *
+ * @param {Object} props - StampProps 타입의 속성 객체
+ * @param {number} props.index - 스탬프의 고유 인덱스
+ *   - 목록에서 스탬프를 식별하며, "삭제" 버튼 클릭 시 removeStampHandler에 전달
+ * @param {string} props.stampUrl - 스탬프 이미지의 URL
+ *   - 캔버스에 추가되고, 미리보기 이미지로 표시
+ * @param {(index: number) => void} props.removeStampHandler - 스탬프 제거 함수
+ *   - "삭제" 버튼 클릭 시 호출되어 스탬프 목록에서 해당 인덱스의 스탬프 제거
+ *
+ * @returns {JSX.Element} 스탬프 미리보기 이미지와 "삭제" 버튼을 포함한 컨테이너
  */
-const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => {
+const Stamp: React.FC<StampProps> = ({ index, stampUrl, removeStampHandler }) => {
   const { fabricCanvasRef } = useCanvasStore();
 
+  // 상수 정의
+  const STAMP_WIDTH = 100; // 스탬프 이미지 기본 너비
+  const DELETE_BUTTON_SIZE = 30; // 삭제 버튼 크기 (너비/높이)
+
+  /**
+   * 캔버스에 스탬프를 추가하고 삭제 버튼을 포함한 그룹을 생성
+   */
   const addStamp = () => {
     if (!fabricCanvasRef) return;
 
     const imgElement = new Image();
     imgElement.src = stampUrl;
+
     imgElement.onload = () => {
       const img = new fabric.FabricImage(imgElement);
-      img.scaleToWidth(100);
-      img.set({
-        left: 0,
-        top: 0,
-      });
+      img.scaleToWidth(STAMP_WIDTH);
+      img.set({ left: 0, top: 0 });
 
+      // 삭제 버튼 (빨간 사각형)
       const deleteButton = new fabric.Rect({
-        width: 30,
-        height: 30,
+        width: DELETE_BUTTON_SIZE,
+        height: DELETE_BUTTON_SIZE,
         fill: "#ff4d4d",
         originX: "center",
         originY: "center",
         hoverCursor: "pointer",
-        scaleX: 1, // 스케일 보정 제거 (고정 크기)
-        scaleY: 1, // 스케일 보정 제거 (고정 크기)
-        opacity: 0, // Initially hidden
+        scaleX: 1,
+        scaleY: 1,
+        opacity: 0, // 초기에는 숨김
       });
 
+      // 삭제 버튼 텍스트 ("X")
       const deleteText = new fabric.Text("X", {
         fontSize: 16,
         fill: "white",
         originX: "center",
         originY: "center",
         evented: false, // 마우스 이벤트 비활성화
-        scaleX: 1, // 스케일 보정 제거 (고정 크기)
-        scaleY: 1, // 스케일 보정 제거 (고정 크기)
-        opacity: 0, // Initially hidden
+        scaleX: 1,
+        scaleY: 1,
+        opacity: 0, // 초기에는 숨김
       });
 
+      // 삭제 버튼 위치 설정
       const imgWidth = img.getScaledWidth();
+      const imgHeight = img.getScaledHeight();
       deleteButton.set({
         left: imgWidth / 2 - 10,
-        top: -img.getScaledHeight() / 2 + 10,
+        top: -imgHeight / 2 + 10,
       });
       deleteText.set({
         left: imgWidth / 2 - 10,
-        top: -img.getScaledHeight() / 2 + 10,
+        top: -imgHeight / 2 + 10,
       });
 
+      // 삭제 버튼 호버 효과
       deleteButton.on("mouseover", () => {
-        deleteButton.set({ fill: "#cc0000" });
+        deleteButton.set({ fill: "#cc0000" }); // 어두운 빨간색
         fabricCanvasRef.renderAll();
       });
       deleteButton.on("mouseout", () => {
-        deleteButton.set({ fill: "#ff4d4d" });
+        deleteButton.set({ fill: "#ff4d4d" }); // 원래 색상
         fabricCanvasRef.renderAll();
       });
 
+      // 스탬프와 삭제 버튼을 그룹화
       const group = new fabric.Group([img, deleteButton, deleteText], {
         left: 0,
         top: 0,
-        selectable: true,
-        subTargetCheck: true, // 하위 객체 클릭 감지 활성화
+        selectable: true, // 드래그 가능
+        subTargetCheck: true, // 하위 객체 클릭 감지
       });
 
+      // 삭제 버튼 클릭 시 그룹 제거
       group.on("mousedown", (e) => {
-        if (e.subTargets && e.subTargets.includes(deleteButton)) {
+        if (e.subTargets?.includes(deleteButton)) {
           fabricCanvasRef.remove(group);
           fabricCanvasRef.renderAll();
         }
       });
 
-      // 그룹에 마우스 오버 시 deleteButton과 deleteText 표시
+      // 마우스 오버/아웃 시 삭제 버튼 표시/숨김
       group.on("mouseover", () => {
         deleteButton.set({ opacity: 1 });
         deleteText.set({ opacity: 1 });
         fabricCanvasRef.renderAll();
       });
-
-      // 그룹에서 마우스 아웃 시 deleteButton과 deleteText 숨김
       group.on("mouseout", () => {
         deleteButton.set({ opacity: 0 });
         deleteText.set({ opacity: 0 });
@@ -104,15 +128,16 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
     };
 
     imgElement.onerror = (err) => {
-      console.error("Image load failed:", err);
+      console.error("Failed to load stamp image:", { error: err, stampUrl });
     };
   };
 
+  // 스탬프 추가 핸들러
   const handleClick = () => {
     addStamp();
   };
 
-  // 선택된 도장 삭제
+  // 선택된 스탬프 삭제 (Delete 키)
   const handleDeleteSelected = () => {
     if (!fabricCanvasRef) return;
 
@@ -124,6 +149,7 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
     }
   };
 
+  // Delete 키 이벤트 리스너 설정
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Delete") {
@@ -134,14 +160,14 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [fabricCanvasRef]); // 의존성 명확화
 
   return (
     <StampContainer>
       <StampImage src={stampUrl} alt={`Stamp ${index}`} onClick={handleClick} />
       <RemoveButton
         onClick={(e) => {
-          e.stopPropagation();
+          e.stopPropagation(); // 이미지 클릭 이벤트와 중복 방지
           removeStampHandler(index);
         }}
       >
@@ -153,15 +179,21 @@ const Stamp: React.FC<StampType> = ({ index, stampUrl, removeStampHandler }) => 
 
 export default Stamp;
 
+/**
+ * 컨테이너 스타일: 스탬프 미리보기와 버튼을 감싸는 박스
+ */
 const StampContainer = styled.div`
   position: relative;
   margin: 10px;
   text-align: center;
-  border: "1px solid gray";
+  border: 1px solid gray; /* 문자열 따옴표 제거 */
   padding: 5px;
   cursor: pointer;
 `;
 
+/**
+ * 삭제 버튼 스타일: 스탬프 목록에서 제거
+ */
 const RemoveButton = styled.button`
   position: absolute;
   bottom: 5px;
@@ -174,11 +206,14 @@ const RemoveButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #cc0000;
+    background-color: #cc0000; /* 호버 시 어두운 빨간색 */
   }
 `;
 
+/**
+ * 스탬프 이미지 스타일: 미리보기 이미지
+ */
 const StampImage = styled.img`
   max-width: 80px;
-  height: auto;
+  height: auto; /* 비율 유지 */
 `;

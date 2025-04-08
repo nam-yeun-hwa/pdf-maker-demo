@@ -1,23 +1,9 @@
-import { usePdfStore } from "@/store/pdfStore";
 import React, { useState, useEffect } from "react";
-import * as pdfjsLib from "pdfjs-dist";
-import type { PageViewport } from "pdfjs-dist";
-import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
+import { usePdfStore } from "@/store/pdfStore";
 import { useSelectedPdfStore } from "@/store/selectedPdfStore";
 import styled from "@emotion/styled";
-// pdfjs worker 설정
-pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc; // 로컬 경로 설정
+import { generatePdfThumbnails, Thumbnail } from "@/utils/pdfUtils";
 
-// 썸네일 객체의 타입 정의
-interface Thumbnail {
-  pageNum: number;
-  url: string;
-}
-
-/**
- * @function PdfThumbnailViewer
- * @description 업로드한 PDF파일의 모든 페이지를 화면에 로드하여 리스트로 보여줍니다.
- */
 const PdfThumbnailViewer: React.FC = () => {
   const [thumbnails, setThumbnails] = useState<Thumbnail[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -26,94 +12,55 @@ const PdfThumbnailViewer: React.FC = () => {
   const { file } = usePdfStore();
   const { setImgPath } = useSelectedPdfStore();
 
+  const TIMEOUT_MS = 10000; // PDF 로드 타임아웃 (10초)
+  const THUMBNAIL_SCALE = 1; // 썸네일 렌더링 기본 스케일
+
+  const generateThumbnails = async (pdfFile: File) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const thumbnailList = await generatePdfThumbnails(pdfFile, THUMBNAIL_SCALE, TIMEOUT_MS);
+      setThumbnails(thumbnailList);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setError(`PDF 처리 중 오류 발생: ${errorMsg}`);
+      console.error("Thumbnail generation failed:", { error: err, file });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const generateThumbnails = async () => {
-      if (!file) {
-        setError("PDF 파일이 제공되지 않았습니다.");
-        return;
-      } else {
-        setError("");
-      }
-
-      setLoading(true);
-      try {
-        const pdfUrl = URL.createObjectURL(file);
-
-        const loadingTask = pdfjsLib.getDocument({
-          url: pdfUrl,
-        });
-
-        // Promise에 타임아웃 추가
-        const pdfPromise = Promise.race([
-          loadingTask.promise,
-          new Promise<never>((_, reject) => setTimeout(() => reject(new Error("PDF 로드 타임아웃")), 10000)),
-        ]);
-
-        const pdf = (await pdfPromise) as pdfjsLib.PDFDocumentProxy;
-
-        const numPages: number = pdf.numPages;
-        const thumbnailList: Thumbnail[] = [];
-
-        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-          const page: pdfjsLib.PDFPageProxy = await pdf.getPage(pageNum);
-
-          const viewport: PageViewport = page.getViewport({ scale: 1 });
-
-          const canvas: HTMLCanvasElement = document.createElement("canvas");
-          const context: CanvasRenderingContext2D | null = canvas.getContext("2d");
-
-          if (!context) {
-            throw new Error("Canvas context를 가져올 수 없습니다.");
-          }
-
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          await page.render({
-            canvasContext: context,
-            viewport: viewport,
-          }).promise;
-          console.log(`Page ${pageNum} rendered`);
-
-          const thumbnailUrl: string = canvas.toDataURL("image/png");
-          thumbnailList.push({
-            pageNum,
-            url: thumbnailUrl,
-          });
-        }
-
-        setThumbnails(thumbnailList);
-        console.log("Thumbnails generated:", thumbnailList);
-        URL.revokeObjectURL(pdfUrl);
-      } catch (err) {
-        setError("PDF 처리 중 오류가 발생했습니다: " + (err instanceof Error ? err.message : String(err)));
-        console.error("Error details:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    generateThumbnails();
+    if (!file) {
+      setError("PDF 파일이 제공되지 않았습니다.");
+      setThumbnails([]);
+      return;
+    }
+    generateThumbnails(file);
   }, [file]);
 
-  const handleImageClick = async (thumbnailUrl: string) => {
+  const handleImageClick = (thumbnailUrl: string) => {
     if (thumbnailUrl) {
       setImgPath(thumbnailUrl);
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <Container>
         <ErrorMsg>썸네일 생성 중...</ErrorMsg>
       </Container>
     );
-  if (error)
+  }
+
+  if (error) {
     return (
       <Container>
-        <ErrorMsg>{error}</ErrorMsg>
+        <ErrorMsg color="#e74c3c">{error}</ErrorMsg>
       </Container>
     );
+  }
 
   return (
     <Container>
@@ -137,41 +84,61 @@ const PdfThumbnailViewer: React.FC = () => {
 
 export default PdfThumbnailViewer;
 
+/**
+ * 컨테이너 스타일: 썸네일 뷰어의 외부 박스
+ */
 const Container = styled.div`
   position: relative;
   display: flex;
-  flex: 1;
+  flex: 1; /* 부모에서 1배 비율 차지 */
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
   width: 100%;
-  min-width: 320px;
-  max-width: 320px;
-  background: #e9e9e9;
+  min-width: 320px; /* 최소 너비 고정 */
+  max-width: 320px; /* 최대 너비 제한 */
+  background: #e9e9e9; /* 회색 배경으로 구분 */
   overflow: hidden;
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 8px; /* 둥근 모서리 */
+  padding: 12px; /* 내부 여백 */
 `;
 
+/**
+ * 썸네일 컨테이너: 썸네일 리스트를 감싸는 영역
+ */
 const ThumbnailContainer = styled.div`
   height: 100%;
 `;
 
+/**
+ * 썸네일 그리드: 스크롤 가능한 썸네일 리스트
+ */
 const ThumbnailGrid = styled.div`
   height: 100%;
-  overflow-y: auto;
+  overflow-y: auto; /* 세로 스크롤 활성화 */
 `;
 
+/**
+ * 썸네일 이미지: 개별 썸네일과 페이지 번호
+ */
 const ThumbnailImage = styled.div`
   img {
     width: 100%;
-    height: auto;
+    height: auto; /* 비율 유지 */
+  }
+  p {
+    margin: 4px 0; /* 페이지 번호 여백 */
+    font-size: 12px;
+    text-align: center;
   }
 `;
 
+/**
+ * 에러 메시지 스타일: 로딩/에러 메시지 표시
+ */
 const ErrorMsg = styled.h3<{ color?: string }>`
   font-size: 16px;
   font-weight: 400;
   padding: 10px;
-  color: ${(props) => props.color || "#555"};
+  color: ${(props) => props.color || "#555"}; /* 기본 회색, 커스텀 색상 가능 */
 `;
