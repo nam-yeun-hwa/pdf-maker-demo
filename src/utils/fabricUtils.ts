@@ -114,7 +114,7 @@ export const addStampToCanvas = (
   imgElement.onload = () => {
     const img = new fabric.FabricImage(imgElement);
     img.scaleToWidth(stampWidth);
-    img.set({ left: 0, top: 0 });
+    img.set({ id: "stamp", left: 0, top: 0 });
 
     const deleteButton = new fabric.Rect({
       width: deleteButtonSize,
@@ -184,7 +184,8 @@ export const addStampToCanvas = (
 };
 
 /**
- * 캔버스에서 선택된 객체를 제거합니다.
+ * @function removeSelectedObject
+ * @description 캔버스에서 선택된 객체를 제거합니다.
  * @param {fabric.Canvas} canvas - Fabric.js 캔버스 인스턴스
  */
 export const removeSelectedObject = (canvas: fabric.Canvas) => {
@@ -196,6 +197,16 @@ export const removeSelectedObject = (canvas: fabric.Canvas) => {
   }
 };
 
+/**
+ * @function downloadPDF
+ * @description
+ * Fabric.js 캔버스를 PDF 파일로 변환하여 다운로드합니다.
+ * 캔버스 높이가 A4 페이지 높이를 초과할 경우 다중 페이지로 나눠 생성합니다.
+ *
+ * @param {fabric.Canvas | null} canvas - PDF로 변환할 Fabric.js 캔버스 객체
+ * @returns {void} - 반환값 없음. PDF 파일을 생성하고 다운로드합니다.
+ * @throws {Error} - 캔버스가 null일 경우 콘솔에 오류 메시지를 출력합니다.
+ */
 export const downloadPDF = (canvas: fabric.Canvas | null) => {
   if (!canvas) {
     console.error("Canvas is not available");
