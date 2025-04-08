@@ -20,8 +20,8 @@ export const useFabricCanvas = (canvasMargin: number, heightRatio: number) => {
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
-    const canvasElement = canvasRef.current;
+    const container = containerRef.current; //컨테이너 넓이 참조
+    const canvasElement = canvasRef.current; //캔버스 참조
 
     if (!container || !canvasElement) {
       console.error("Container or canvas element is not available");
@@ -34,12 +34,13 @@ export const useFabricCanvas = (canvasMargin: number, heightRatio: number) => {
       fabricCanvasRef.current = initializeFabricCanvas(canvasElement, width, container.offsetHeight);
       setCanvasRef(canvasElement);
       setfabricCanvasRef(fabricCanvasRef.current);
+      console.log("initializeFabricCanvas");
     }
 
-    const fabricCanvas = fabricCanvasRef.current;
+    const fabricCanvas = fabricCanvasRef.current; //패브릭캔버스 참조
     if (!fabricCanvas || !imgPath) return;
 
-    fabricCanvas.clear();
+    // fabricCanvas.clear();
 
     if (!imgPath.startsWith("data:image/")) {
       console.error("Invalid image format. Expected Base64 data URL:", imgPath);
@@ -48,8 +49,6 @@ export const useFabricCanvas = (canvasMargin: number, heightRatio: number) => {
 
     const canvasWidth = container.offsetWidth - canvasMargin;
     loadImageToCanvas(imgPath, fabricCanvas, canvasWidth);
-    fabricCanvas.setHeight(canvasWidth * heightRatio);
-    fabricCanvas.renderAll();
   }, [imgPath, canvasMargin, heightRatio, setCanvasRef, setfabricCanvasRef]);
 
   return { containerRef, canvasRef };

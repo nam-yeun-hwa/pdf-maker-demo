@@ -41,10 +41,10 @@ interface FileUploadProps extends ButtonProps {
  */
 const FileUpload: React.FC<FileUploadProps> = ({ InputRef, onChange, children, ...buttonProps }) => {
   return (
-    <div className="pdfUpload">
+    <>
       <input ref={InputRef} type="file" onChange={onChange} style={{ display: "none" }} />
       <Button {...buttonProps}>{children}</Button>
-    </div>
+    </>
   );
 };
 

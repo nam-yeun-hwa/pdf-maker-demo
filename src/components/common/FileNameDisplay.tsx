@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import styled from "@emotion/styled";
+import * as S from "@/styles/FileNameDisplayStyles";
 
 /**
  * @interface FileNameDisplayProps
@@ -14,50 +14,34 @@ import styled from "@emotion/styled";
  */
 interface FileNameDisplayProps {
   children?: React.ReactNode;
+  noFileMessage?: string;
   onClick: () => void;
 }
+
 /**
  * @component FileNameDisplay
  * 선택된 파일 이름을 표시하거나 파일이 없을 경우 메시지를 보여주는 컴포넌트입니다.
  * 파일 이름이 있을 경우 제거 버튼("X")을 제공합니다.
  *
- * @param {Object} props - FileNameDisplayProps 타입의 속성 객체
+ * @param {FileNameDisplayProps} props - 컴포넌트 속성
  * @param {React.ReactNode} [props.children] - 표시할 파일 이름 또는 내용
  *   - 생략 시 "No file selected" 메시지 출력
  * @param {() => void} props.onClick - 파일 제거 버튼 클릭 시 실행되는 함수
  *   - 파일을 제거하거나 상태를 업데이트하는 로직에 사용
- *
+ * @returns {JSX.Element} 파일 이름 또는 "No file selected" 메시지를 포함한 컨테이너
  */
-const FileNameDisplay: React.FC<FileNameDisplayProps> = ({ children, onClick }) => {
+const FileNameDisplay: React.FC<FileNameDisplayProps> = ({ children, noFileMessage = "No file selected", onClick }) => {
   if (!children) {
-    return <NoFileStyles>No file selected</NoFileStyles>;
+    return <S.NoFileStyles>{noFileMessage}</S.NoFileStyles>;
   }
-
   return (
-    <Container>
-      📄 파일명: <strong>{children}</strong>{" "}
-      <button type="button" className="pdfFileRemove" onClick={onClick}>
+    <S.Container>
+      📄 파일명: <strong>{children}</strong>
+      <S.RemoveButton type="button" className="pdfFileRemove" onClick={onClick}>
         X
-      </button>
-    </Container>
+      </S.RemoveButton>
+    </S.Container>
   );
 };
 
 export default FileNameDisplay;
-
-const Container = styled.div`
-  padding: "16px";
-  border: "1px solid #e0e0e0";
-  border-radius: "4px";
-  max-width: "300px";
-  strong : {
-    color: "#2c3e50";
-    font-weight: 600;
-  }
-`;
-
-const NoFileStyles = styled.div`
-  padding: "16px";
-  color: "#7f8c8d";
-  font-style: "italic";
-`;

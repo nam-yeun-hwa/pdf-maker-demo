@@ -49,7 +49,7 @@ const PdfThumbnailViewer: React.FC<PdfThumbnailViewerProps> = ({ timeoutMs = 100
           <S.ThumbnailGrid>
             {thumbnails.map((thumbnail) => (
               <S.ThumbnailImage key={thumbnail.pageNum} onClick={() => handleImageClick(thumbnail.url)}>
-                <img src={thumbnail.url} alt={`Page ${thumbnail.pageNum}`} className="thumbnail-image" />
+                <img src={thumbnail.url} alt={`Page ${thumbnail.pageNum}`} />
                 <p>페이지 {thumbnail.pageNum}</p>
               </S.ThumbnailImage>
             ))}

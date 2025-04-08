@@ -1,4 +1,5 @@
 import * as fabric from "fabric";
+import jsPDF from "jspdf"; // PDF 생성용
 
 /**
  * Fabric.js 캔버스를 초기화하고 설정하는 유틸리티 함수
@@ -40,9 +41,15 @@ export const loadImageToCanvas = (
   imgElement.onload = () => {
     const fabricImg = new fabric.FabricImage(imgElement);
     fabricImg.scaleToWidth(canvasWidth);
+    const offset = 10; // 이미지 간 간격
+    const topLength = canvas.getObjects().filter((obj) => obj.get("id") === "pdf").length;
+    const newLeft = position.left ?? 10;
+    const newTop = offset + topLength * fabricImg.getScaledHeight();
+    console.log("newTop", newLeft, newTop);
     fabricImg.set({
-      left: position.left,
-      top: position.top,
+      id: "pdf",
+      left: newLeft,
+      top: newTop,
       selectable: false,
       lockMovementX: true,
       lockMovementY: true,
@@ -53,8 +60,34 @@ export const loadImageToCanvas = (
       hasBorders: false,
     });
 
+    // 디버깅: 추가된 객체 정보 출력
+    // console.log(`Adding image at left: ${newLeft}, top: ${newTop} , ${canvas.getObjects().length}`);
+
+    // 기존 객체 유지 확인
+    console.log("Current objects before adding:", canvas.getObjects());
+
+    // 새 이미지 추가
     canvas.add(fabricImg);
+
+    // 추가 후 객체 확인
+    console.log("Current objects after adding:", canvas.getObjects());
+
+    // 캔버스 높이 조정
+    const pdfLength = canvas.getObjects().filter((obj) => obj.get("id") === "pdf").length;
+    if (pdfLength === 1) {
+      canvas.setHeight(fabricImg.getScaledHeight() + offset);
+    } else {
+      const totalHeight = pdfLength * fabricImg.getScaledHeight() + offset;
+      canvas.setHeight(totalHeight);
+    }
+    // HTML 캔버스 요소의 높이 동기화
+    // const htmlCanvas = canvas.getElement() as HTMLCanvasElement;
+    // htmlCanvas.height = totalHeight;
+
     canvas.renderAll();
+
+    // 디버깅
+    // console.log(`Added image at top: ${newTop}, Canvas height: ${canvas.getHeight()}`);
   };
 
   imgElement.onerror = (err) => {
@@ -163,27 +196,59 @@ export const removeSelectedObject = (canvas: fabric.Canvas) => {
   }
 };
 
-/**
- * 캔버스 내용을 PNG 파일로 다운로드합니다.
- * @param {fabric.Canvas} canvas - Fabric.js 캔버스 인스턴스
- * @param {string} [fileName="pdf-image.png"] - 다운로드 파일명
- */
-export const downloadCanvasAsPng = (canvas: fabric.Canvas, fileName: string = "pdf-image.png") => {
+export const downloadPDF = (canvas: fabric.Canvas | null) => {
   if (!canvas) {
-    console.warn("Canvas is not initialized");
+    console.error("Canvas is not available");
     return;
   }
 
-  const dataURL = canvas.toDataURL({
-    format: "png",
-    quality: 1.0,
-    multiplier: 1,
-  });
+  // fabric.Canvas에서 HTMLCanvasElement 추출
+  const htmlCanvas = canvas.getElement() as HTMLCanvasElement;
+  const imgData = htmlCanvas.toDataURL("image/png"); // 캔버스를 PNG 이미지로 변환
 
-  const link = document.createElement("a");
-  link.href = dataURL;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  const pdf = new jsPDF("p", "mm", "a4"); // A4 크기의 PDF 생성
+  const pdfWidth = pdf.internal.pageSize.getWidth(); // PDF 페이지 너비 (mm)
+  const pdfHeight = pdf.internal.pageSize.getHeight(); // PDF 페이지 높이 (mm, 약 297mm)
+
+  // fabric.Canvas의 논리적 너비와 높이
+  const canvasWidth = canvas.getWidth();
+  const canvasHeight = canvas.getHeight();
+
+  // 캔버스 비율을 PDF에 맞춤
+  const aspectRatio = canvasHeight / canvasWidth;
+  const width = pdfWidth; // PDF 너비 기준
+  const totalHeight = width * aspectRatio; // 캔버스의 전체 높이 (mm 단위로 변환)
+
+  // 단일 페이지로 충분한 경우
+  if (totalHeight <= pdfHeight) {
+    pdf.addImage(imgData, "PNG", 0, 0, width, totalHeight);
+  } else {
+    // 다중 페이지 처리
+    let heightLeft = totalHeight;
+    let position = 0;
+    const pageHeightInCanvas = (pdfHeight / totalHeight) * canvasHeight; // 한 페이지에 해당하는 캔버스 높이
+
+    while (heightLeft > 0) {
+      // 현재 페이지에 그릴 이미지 영역 설정
+      // const clipHeight = Math.min(pdfHeight, heightLeft);
+      pdf.addImage(imgData, "PNG", 0, position, width, totalHeight, undefined, undefined, {
+        clip: {
+          x: 0,
+          y: -position * (canvasHeight / totalHeight), // 캔버스 내 위치 조정
+          width: canvasWidth,
+          height: pageHeightInCanvas,
+        },
+      } as any);
+
+      heightLeft -= pdfHeight;
+      position -= pdfHeight;
+
+      // 남은 높이가 있으면 새 페이지 추가
+      if (heightLeft > 0) {
+        pdf.addPage();
+      }
+    }
+  }
+
+  pdf.save("canvas.pdf");
 };

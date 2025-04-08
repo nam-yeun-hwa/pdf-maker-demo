@@ -1,6 +1,6 @@
 import { usePdfController } from "@/hooks/usePdfController";
 import { useCanvasStore } from "@/store/canvasStore";
-import { downloadCanvasAsPng } from "@/utils/fabricUtils";
+import { downloadPDF } from "@/utils/fabricUtils";
 import StampUploader from "@/components/StampUploader";
 import FileNameDisplay from "./common/FileNameDisplay";
 import FileUpload from "@/components/common/FileUpload";
@@ -20,7 +20,7 @@ const StampController = () => {
 
   const handleDownload = () => {
     if (fabricCanvasRef) {
-      downloadCanvasAsPng(fabricCanvasRef);
+      downloadPDF(fabricCanvasRef);
     }
   };
 
@@ -30,7 +30,7 @@ const StampController = () => {
         <FileUpload InputRef={pdfInputRef} onChange={handlePDFChange} onClick={handlePDFUpload}>
           PDF 업로드
         </FileUpload>
-        {file && <FileNameDisplay onClick={handlePDFRemove}>{file.name}</FileNameDisplay>}
+        <FileNameDisplay onClick={handlePDFRemove}>{file?.name}</FileNameDisplay>
         <Button onClick={handlePDFRemove}>PDF 삭제</Button>
         <Button onClick={handleDownload}>PDF 다운로드</Button>
       </S.Section>
