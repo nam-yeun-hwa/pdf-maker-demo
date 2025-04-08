@@ -2,6 +2,8 @@ import { processUploadedFiles } from "@/utils/fileUtils";
 import { useState, ChangeEvent, useRef } from "react";
 
 /**
+ * @hook useFileUploader
+ * @description
  * 파일 업로드와 관련된 상태 및 이벤트를 관리하는 커스텀 훅입니다.
  * 업로드된 파일의 Blob URL 목록을 관리하며, 파일 추가, 제거, 업로드 트리거 기능을 제공합니다.
  *

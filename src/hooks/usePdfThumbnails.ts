@@ -4,7 +4,8 @@ import { useSelectedPdfStore } from "@/store/selectedPdfStore";
 import { generatePdfThumbnails, Thumbnail } from "@/utils/pdfUtils";
 
 /**
- * PDF 파일에서 썸네일을 생성하고 상태를 관리하는 커스텀 훅
+ * @hook usePdfThumbnails
+ * @description PDF 파일에서 썸네일을 생성하고 상태를 관리하는 커스텀 훅
  * @param {number} timeoutMs - PDF 로드 타임아웃 (밀리초)
  * @param {number} thumbnailScale - 썸네일 렌더링 스케일
  * @returns {{

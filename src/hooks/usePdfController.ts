@@ -3,7 +3,8 @@ import { usePdfStore } from "@/store/pdfStore";
 import { useCanvasStore } from "@/store/canvasStore";
 
 /**
- * PDF 파일 업로드, 제거, 캔버스 초기화를 관리하는 커스텀 훅
+ * @hook usePdfController
+ * @description PDF 파일 업로드, 제거, 캔버스 초기화를 관리하는 커스텀 훅
  * @returns PDF 파일 상태와 관련 핸들러 및 참조 객체
  */
 export const usePdfController = () => {
