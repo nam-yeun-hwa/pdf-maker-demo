@@ -18,7 +18,7 @@ import { useState, ChangeEvent, useRef } from "react";
  * }} 파일 목록과 업로드 관련 핸들러 및 참조 객체를 포함한 객체
  */
 export const useFileUploader = (allowedType: string, maxCount: number) => {
-  const [files, setFiles] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   /**
@@ -28,8 +28,10 @@ export const useFileUploader = (allowedType: string, maxCount: number) => {
    */
   const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const newFiles = processUploadedFiles(event.target.files!, allowedType, maxCount, files);
-    setFiles((prev) => [...prev, ...newFiles]);
-    event.target.value = ""; // 동일 파일 재선택을 위해 초기화
+    if (newFiles.length > 0) {
+      setFiles((prev) => [...prev, ...newFiles]);
+    }
+    event.target.value = "";
   };
 
   /**

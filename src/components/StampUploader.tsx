@@ -2,6 +2,7 @@ import Stamp from "@/components/Stamp";
 import FileUpload from "@/components/common/FileUpload";
 import * as S from "@/styles/StampUploaderStyles";
 import { useFileUploader } from "@/hooks/useFileUploader";
+import { useEffect, useState } from "react";
 
 /**
  * @interface StampUploaderProps
@@ -34,6 +35,8 @@ interface StampUploaderProps {
  */
 
 const StampUploader: React.FC<StampUploaderProps> = ({ maxStamps = 5, allowedFileType = "image/png" }) => {
+  const [stampUrls, setStampUrls] = useState<string[]>([]);
+
   const {
     files: stampsView,
     handleUpload,
@@ -41,6 +44,16 @@ const StampUploader: React.FC<StampUploaderProps> = ({ maxStamps = 5, allowedFil
     triggerUpload,
     inputRef,
   } = useFileUploader(allowedFileType, maxStamps);
+
+  useEffect(() => {
+    const urls = stampsView.map((stamp) => URL.createObjectURL(stamp));
+    setStampUrls(urls);
+
+    // cleanup: 컴포넌트 언마운트 또는 stampsView 변경 시 이전 URL 해제
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [stampsView]);
 
   return (
     <S.Container>
@@ -61,8 +74,8 @@ const StampUploader: React.FC<StampUploaderProps> = ({ maxStamps = 5, allowedFil
           </S.Subtitle>
           <S.Subtitle color="red">- 도장 사진을 누르시면 도장이 찍힙니다.</S.Subtitle>
           <S.StampGrid>
-            {stampsView.map((stampUrl, index) => (
-              <Stamp key={index} index={index} stampUrl={stampUrl} removeStampHandler={removeFile} />
+            {stampUrls.map((url, index) => (
+              <Stamp key={index} index={index} stampUrl={url} removeStampHandler={removeFile} />
             ))}
           </S.StampGrid>
         </S.PreviewSection>

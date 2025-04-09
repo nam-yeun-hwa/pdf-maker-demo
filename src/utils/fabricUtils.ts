@@ -37,12 +37,8 @@ export const loadImageToCanvas = (
   canvasWidth: number,
   position: { left?: number; top?: number } = { left: 10, top: 10 }
 ) => {
-  // 기존 이미지 URL 목록 확인
-  const existingImages = canvas.getObjects().map((obj) => obj.get("data")); // 'data' 속성에 URL 저장 가정
-
-  // 이미지가 이미 존재하는 경우 추가하지 않음
-  if (existingImages.includes(imageUrl)) {
-    console.log("Image already exists in canvas:", imageUrl);
+  // 중복 이미지 체크
+  if (isImageAlreadyInCanvas(canvas, imageUrl)) {
     return;
   }
 
@@ -117,7 +113,7 @@ export const addStampToCanvas = (
   imgElement.onload = () => {
     const img = new fabric.FabricImage(imgElement);
     img.scaleToWidth(stampWidth);
-    img.set({ id: "stamp", left: 0, top: 0 });
+    img.set({ id: "stamp", left: 0, top: 0, data: stampUrl });
 
     const deleteButton = new fabric.Rect({
       width: deleteButtonSize,
@@ -265,4 +261,20 @@ export const downloadPDF = (canvas: fabric.Canvas | null) => {
   }
 
   pdf.save("canvas.pdf");
+};
+
+/**
+ * @function isImageAlreadyInCanvas
+ * @description 캔버스에 특정 이미지 URL이 이미 존재하는지 확인하는 함수
+ * @param {fabric.Canvas} canvas - Fabric.js 캔버스 인스턴스
+ * @param {string} imageUrl - 확인할 이미지 URL
+ * @returns {boolean} - 이미지가 존재하면 true, 없으면 false
+ */
+export const isImageAlreadyInCanvas = (canvas: fabric.Canvas, imageUrl: string): boolean => {
+  const existingImages = canvas.getObjects().map((obj) => obj.get("data"));
+  const exists = existingImages.includes(imageUrl);
+  if (exists) {
+    console.log("Image already exists in canvas:", imageUrl);
+  }
+  return exists;
 };

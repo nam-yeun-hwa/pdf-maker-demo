@@ -30,11 +30,13 @@ const StampController = () => {
         <FileUpload InputRef={pdfInputRef} onChange={handlePDFChange} onClick={handlePDFUpload}>
           PDF 업로드
         </FileUpload>
+        {/* 업로드된 pdf 파일 표시 */}
         <FileNameDisplay onClick={handlePDFRemove}>{file?.name}</FileNameDisplay>
         <Button onClick={handlePDFRemove}>PDF 삭제</Button>
         <Button onClick={handleDownload}>PDF 다운로드</Button>
       </S.Section>
       <S.Section>
+        {/* 도장업로더 */}
         <StampUploader />
       </S.Section>
     </S.Container>
