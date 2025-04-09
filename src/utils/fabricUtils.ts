@@ -37,6 +37,10 @@ export const loadImageToCanvas = (
   canvasWidth: number,
   position: { left?: number; top?: number } = { left: 10, top: 10 }
 ) => {
+  const A4_WIDTH = 2480; // 210mm
+  const A4_HEIGHT = 3508; // 297mm
+  const A4_ASPECT_RATIO = A4_HEIGHT / A4_WIDTH; // 약 1.414
+  // const DPI = 96; // 예: 96 DPI
   // 중복 이미지 체크
   if (isImageAlreadyInCanvas(canvas, imageUrl)) {
     return;
@@ -66,6 +70,8 @@ export const loadImageToCanvas = (
       hasControls: false,
       hasBorders: false,
       data: imageUrl, // 이미지 URL을 객체에 저장하여 중복 확인 가능
+      stroke: "black", // 테두리 색상 (예: 검정색)
+      strokeWidth: 2, // 테두리 두께 (픽셀 단위)
     });
 
     // 기존 객체 유지 확인
@@ -80,7 +86,7 @@ export const loadImageToCanvas = (
     // 캔버스 높이 조정
     const pdfLength = canvas.getObjects().filter((obj) => obj.get("id") === "pdf").length;
     if (pdfLength === 1) {
-      canvas.setHeight(fabricImg.getScaledHeight() + offset);
+      canvas.setHeight(canvasWidth * A4_ASPECT_RATIO);
     } else {
       const totalHeight = pdfLength * fabricImg.getScaledHeight() + offset;
       canvas.setHeight(totalHeight);
@@ -223,12 +229,15 @@ export const downloadPDF = (canvas: fabric.Canvas | null) => {
   // fabric.Canvas의 논리적 너비와 높이
   const canvasWidth = canvas.getWidth();
   const canvasHeight = canvas.getHeight();
-
+  console.log("canvasWidth", canvasWidth);
+  console.log("canvasHeight", canvasHeight);
   // 캔버스 비율을 PDF에 맞춤
   const aspectRatio = canvasHeight / canvasWidth;
   const width = pdfWidth; // PDF 너비 기준
-  const totalHeight = width * aspectRatio; // 캔버스의 전체 높이 (mm 단위로 변환)
-
+  const totalHeight = pdfWidth * aspectRatio; // 캔버스의 전체 높이 (mm 단위로 변환)
+  console.log(aspectRatio);
+  console.log(width);
+  console.log(totalHeight);
   // 단일 페이지로 충분한 경우
   if (totalHeight <= pdfHeight) {
     pdf.addImage(imgData, "PNG", 0, 0, width, totalHeight);
@@ -274,7 +283,7 @@ export const isImageAlreadyInCanvas = (canvas: fabric.Canvas, imageUrl: string):
   const existingImages = canvas.getObjects().map((obj) => obj.get("data"));
   const exists = existingImages.includes(imageUrl);
   if (exists) {
-    console.log("Image already exists in canvas:", imageUrl);
+    // console.log("Image already exists in canvas:", imageUrl);
   }
   return exists;
 };
