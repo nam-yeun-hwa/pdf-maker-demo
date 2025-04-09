@@ -1,6 +1,14 @@
 # PDFMarker
 PDFMarker은 PDF를 업로드하고 PDF의 각 페이지를 추가 하여 도장을 찍는 기능을 제공하는 애플리케이션입니다.
 
+## 미리보기 데모
+
+아래 이미지를 클릭하면 새 창에서 MP4를 미리 볼 수 있습니다. </br>
+<a href="https://drive.google.com/file/d/1Jvk1dQwbzZAHGGur31HfDuaFqhWcJxOV/preview" target="_blank">
+  📄 미리보기
+</a>
+
+
 ## 주요 기능
 - 도장은 최대 5개 업로드가 가능하고 하나의 도장은 여러번 찍을 수 있습니다. 
 - 편집된 PDF는 다운로드 할수 있습니다.
