@@ -44,6 +44,11 @@ export const generatePdfThumbnails = async (
     // 각 페이지 썸네일 생성
     for (let pageNum = 1; pageNum <= numPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
+      // 목표 DPI 설정 (300 DPI)
+      const DPI = 300;
+      const BASE_DPI = 72; // PDF 기본 DPI
+      const scale = DPI / BASE_DPI; // 약 4.1667 (300 DPI로 스케일링)
+
       const viewport = page.getViewport({ scale });
 
       const canvas = document.createElement("canvas");
@@ -53,15 +58,22 @@ export const generatePdfThumbnails = async (
         throw new Error(`페이지 ${pageNum}: Canvas context를 가져올 수 없습니다.`);
       }
 
-      canvas.height = viewport.height;
+      // 고해상도 캔버스 설정
       canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      // 캔버스 품질 개선
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high"; // 브라우저 지원 시 고품질 렌더링
 
       await page.render({
         canvasContext: context,
         viewport: viewport,
       }).promise;
 
+      // PNG로 고해상도 이미지 생성
       const thumbnailUrl = canvas.toDataURL("image/png");
+
       thumbnailList.push({ pageNum, url: thumbnailUrl });
     }
 

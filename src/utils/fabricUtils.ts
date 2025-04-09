@@ -218,28 +218,35 @@ export const downloadPDF = (canvas: fabric.Canvas | null) => {
     return;
   }
 
-  // fabric.Canvas에서 HTMLCanvasElement 추출
-  const htmlCanvas = canvas.getElement() as HTMLCanvasElement;
-  const imgData = htmlCanvas.toDataURL("image/png"); // 캔버스를 PNG 이미지로 변환
-
   const pdf = new jsPDF("p", "mm", "a4"); // A4 크기의 PDF 생성
   const pdfWidth = pdf.internal.pageSize.getWidth(); // PDF 페이지 너비 (mm)
   const pdfHeight = pdf.internal.pageSize.getHeight(); // PDF 페이지 높이 (mm, 약 297mm)
+  const canvasWidth = canvas.getWidth();
+  const canvasHeight = canvas.getHeight();
+  const DPI = 300;
+  const MM_PER_INCH = 25.4;
+  const pxPerMm = DPI / MM_PER_INCH;
+  const targetWidthPx = pdfWidth * pxPerMm;
+  const multiplier = targetWidthPx / canvasWidth;
+
+  // fabric.Canvas에서 HTMLCanvasElement 추출
+  // const htmlCanvas = canvas.getElement() as HTMLCanvasElement;
+
+  const imgData = canvas.toDataURL({
+    format: "jpeg", // JPEG로 변경
+    quality: 0.95, // 품질 설정
+    multiplier, // 해상도 증가
+  });
 
   const topCount = canvas.getObjects().filter((obj) => obj.get("id") === "pdf").length;
 
-  console.log("topCount", topCount);
   // fabric.Canvas의 논리적 너비와 높이
-  const canvasWidth = canvas.getWidth();
-  const canvasHeight = canvas.getHeight();
 
   // 캔버스 비율을 PDF에 맞춤
   const canvasGetHeight = pdfHeight * topCount;
   const aspectRatio = canvasGetHeight / pdfWidth;
   const totalHeight = pdfWidth * aspectRatio; // 캔버스의 전체 높이 (mm 단위로 변환)
-  console.log(aspectRatio);
-  console.log(pdfWidth);
-  console.log(totalHeight);
+
   // 단일 페이지로 충분한 경우
   if (totalHeight <= pdfHeight) {
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, totalHeight);
