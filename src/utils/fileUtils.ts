@@ -1,5 +1,6 @@
 /**
- * 파일 목록에서 허용된 형식의 파일을 필터링하고 Blob URL을 생성하는 유틸리티 함수
+ * @function processUploadedFiles
+ * @description 파일 목록에서 허용된 형식의 파일을 필터링하고 Blob URL을 생성하는 유틸리티 함수
  * @param {FileList} files - 업로드된 파일 목록
  * @param {string} allowedType - 허용된 파일 MIME 타입 (예: "image/png")
  * @param {number} maxCount - 최대 허용 파일 개수

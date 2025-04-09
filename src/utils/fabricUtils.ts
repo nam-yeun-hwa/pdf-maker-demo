@@ -2,7 +2,8 @@ import * as fabric from "fabric";
 import jsPDF from "jspdf"; // PDF 생성용
 
 /**
- * Fabric.js 캔버스를 초기화하고 설정하는 유틸리티 함수
+ * @function initializeFabricCanvas
+ * @description Fabric.js 캔버스를 초기화하고 설정하는 유틸리티 함수
  * @param {HTMLCanvasElement} canvasElement - 캔버스 DOM 요소
  * @param {number} width - 캔버스 너비
  * @param {number} height - 캔버스 높이
@@ -23,7 +24,8 @@ export const initializeFabricCanvas = (
 };
 
 /**
- * Fabric.js 캔버스에서 이미지를 로드하고 고정된 상태로 추가하는 함수
+ * @function loadImageToCanvas
+ * @description Fabric.js 캔버스에서 이미지를 로드하고 고정된 상태로 추가하는 함수
  * @param {string} imageUrl - 로드할 이미지의 Base64 URL
  * @param {fabric.Canvas} canvas - Fabric.js 캔버스 인스턴스
  * @param {number} canvasWidth - 캔버스 너비 (이미지 크기 조정 기준)
@@ -35,6 +37,15 @@ export const loadImageToCanvas = (
   canvasWidth: number,
   position: { left?: number; top?: number } = { left: 10, top: 10 }
 ) => {
+  // 기존 이미지 URL 목록 확인
+  const existingImages = canvas.getObjects().map((obj) => obj.get("data")); // 'data' 속성에 URL 저장 가정
+
+  // 이미지가 이미 존재하는 경우 추가하지 않음
+  if (existingImages.includes(imageUrl)) {
+    console.log("Image already exists in canvas:", imageUrl);
+    return;
+  }
+
   const imgElement = new Image();
   imgElement.src = imageUrl;
 
@@ -42,10 +53,10 @@ export const loadImageToCanvas = (
     const fabricImg = new fabric.FabricImage(imgElement);
     fabricImg.scaleToWidth(canvasWidth);
     const offset = 10; // 이미지 간 간격
-    const topLength = canvas.getObjects().filter((obj) => obj.get("id") === "pdf").length;
+    const topCount = canvas.getObjects().filter((obj) => obj.get("id") === "pdf").length;
     const newLeft = position.left ?? 10;
-    const newTop = offset + topLength * fabricImg.getScaledHeight();
-    console.log("newTop", newLeft, newTop);
+    const newTop = offset + topCount * fabricImg.getScaledHeight();
+    // console.log("newTop", newLeft, newTop);
     fabricImg.set({
       id: "pdf",
       left: newLeft,
@@ -58,10 +69,8 @@ export const loadImageToCanvas = (
       lockScalingY: true,
       hasControls: false,
       hasBorders: false,
+      data: imageUrl, // 이미지 URL을 객체에 저장하여 중복 확인 가능
     });
-
-    // 디버깅: 추가된 객체 정보 출력
-    // console.log(`Adding image at left: ${newLeft}, top: ${newTop} , ${canvas.getObjects().length}`);
 
     // 기존 객체 유지 확인
     console.log("Current objects before adding:", canvas.getObjects());
@@ -80,14 +89,8 @@ export const loadImageToCanvas = (
       const totalHeight = pdfLength * fabricImg.getScaledHeight() + offset;
       canvas.setHeight(totalHeight);
     }
-    // HTML 캔버스 요소의 높이 동기화
-    // const htmlCanvas = canvas.getElement() as HTMLCanvasElement;
-    // htmlCanvas.height = totalHeight;
 
     canvas.renderAll();
-
-    // 디버깅
-    // console.log(`Added image at top: ${newTop}, Canvas height: ${canvas.getHeight()}`);
   };
 
   imgElement.onerror = (err) => {

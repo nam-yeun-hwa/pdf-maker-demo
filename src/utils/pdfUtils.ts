@@ -14,7 +14,8 @@ export interface Thumbnail {
 }
 
 /**
- * PDF 파일에서 썸네일을 생성하는 유틸리티 함수
+ * @function generatePdfThumbnails
+ * @description PDF 파일에서 썸네일을 생성하는 유틸리티 함수
  * @param {File} pdfFile - 업로드된 PDF 파일 객체
  * @param {number} scale - 썸네일 렌더링 스케일 (기본값: 1)
  * @param {number} timeoutMs - PDF 로드 타임아웃 시간 (기본값: 10000ms)
