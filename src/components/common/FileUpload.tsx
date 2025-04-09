@@ -16,11 +16,14 @@ import Button, { ButtonProps } from "@/components/common/Button";
  * @property {(e: React.ChangeEvent<HTMLInputElement>) => void} [onChange] - 파일 선택 시 실행되는 이벤트 핸들러
  *   - 파일 입력값이 변경될 때 호출됨
  *   - 선택적 속성
+ * * @property {string} accept - 파일에 허용하는 타입 지정
+ *   - 선택적 속성
  */
 interface FileUploadProps extends ButtonProps {
   InputRef: RefObject<HTMLInputElement | null>;
   children: ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  accept?: string;
 }
 
 /**
@@ -38,11 +41,12 @@ interface FileUploadProps extends ButtonProps {
  * @param {ButtonProps} props.buttonProps - Button 컴포넌트로 전달되는 추가 속성
  *   - type, variant, size, disabled 등 ButtonProps에서 상속된 속성
  *   - 자세한 내용은 ButtonProps 참조
+ * @param {accept}
  */
-const FileUpload: React.FC<FileUploadProps> = ({ InputRef, onChange, children, ...buttonProps }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ InputRef, onChange, children, accept, ...buttonProps }) => {
   return (
     <>
-      <input ref={InputRef} type="file" onChange={onChange} style={{ display: "none" }} />
+      <input ref={InputRef} type="file" onChange={onChange} accept={accept} style={{ display: "none" }} />
       <Button {...buttonProps}>{children}</Button>
     </>
   );

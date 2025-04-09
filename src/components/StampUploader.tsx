@@ -61,6 +61,7 @@ const StampUploader: React.FC<StampUploaderProps> = ({ maxStamps = 5, allowedFil
         size="small"
         disabled={stampsView.length >= maxStamps}
         InputRef={inputRef}
+        accept={".png,image/png"}
         onChange={handleUpload}
         onClick={triggerUpload}
       >

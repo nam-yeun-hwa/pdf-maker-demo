@@ -27,7 +27,12 @@ const StampController = () => {
   return (
     <S.Container>
       <S.Section>
-        <FileUpload InputRef={pdfInputRef} onChange={handlePDFChange} onClick={handlePDFUpload}>
+        <FileUpload
+          InputRef={pdfInputRef}
+          onChange={handlePDFChange}
+          onClick={handlePDFUpload}
+          accept=".pdf,application/pdf"
+        >
           PDF 업로드
         </FileUpload>
         {/* 업로드된 pdf 파일 표시 */}
