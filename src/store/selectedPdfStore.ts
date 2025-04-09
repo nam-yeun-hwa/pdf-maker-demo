@@ -15,7 +15,6 @@ interface PdfPathState {
 }
 
 /**
- * @function useSelectedPdfStore
  * 선택된 PDF 페이지의 이미지 경로를 관리하는 Zustand 스토어입니다.
  * - 선택된 페이지의 이미지 경로(`imgPath`)를 저장하고 업데이트
  * - 경로 설정을 위한 메서드 제공

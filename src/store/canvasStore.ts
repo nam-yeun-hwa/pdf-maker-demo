@@ -22,7 +22,6 @@ interface StampState {
 }
 
 /**
- * @function useCanvasStore
  * 캔버스와 관련된 상태를 관리하는 Zustand 스토어입니다.
  * - Fabric.js 캔버스 인스턴스(`fabricCanvasRef`)와 HTML 캔버스 요소(`canvasRef`)를 저장
  * - 캔버스 설정 및 업데이트를 위한 메서드 제공

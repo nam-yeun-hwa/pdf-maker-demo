@@ -28,7 +28,6 @@ interface StampState {
 }
 
 /**
- * @function useStampStore
  * 스탬프 이미지와 캔버스 상태를 관리하는 Zustand 스토어입니다.
  * - 스탬프 이미지 URL 배열(`stamps`)을 저장하고 최대 5개로 제한
  * - 스탬프 추가, 제거, 초기화 및 캔버스 설정을 위한 메서드 제공

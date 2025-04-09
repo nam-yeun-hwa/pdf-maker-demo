@@ -26,7 +26,6 @@ export interface ButtonProps {
 }
 
 /**
- * @component Button
  * 재사용 가능한 버튼 컴포넌트로, 다양한 스타일, 크기, 상태를 지원합니다.
  *
  * @param {ButtonProps} props - 컴포넌트 속성

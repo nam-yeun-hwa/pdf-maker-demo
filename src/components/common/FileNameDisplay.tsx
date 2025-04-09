@@ -19,7 +19,6 @@ interface FileNameDisplayProps {
 }
 
 /**
- * @component FileNameDisplay
  * 선택된 파일 이름을 표시하거나 파일이 없을 경우 메시지를 보여주는 컴포넌트입니다.
  * 파일 이름이 있을 경우 제거 버튼("X")을 제공합니다.
  *

@@ -8,8 +8,6 @@ import Button from "./common/Button";
 import * as S from "@/styles/StampControllerStyles";
 
 /**
- * @component StampController
- * @description
  * PDF 업로드, 스탬프 관리, 다운로드 기능을 제어하는 패널 컴포넌트입니다.
  * - PDF 파일 업로드 및 삭제
  * - 캔버스에 렌더링된 PDF와 스탬프를 PNG로 다운로드

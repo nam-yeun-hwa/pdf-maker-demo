@@ -4,10 +4,8 @@ import { useSelectedPdfStore } from "@/store/selectedPdfStore";
 import { generatePdfThumbnails, Thumbnail } from "@/utils/pdfUtils";
 
 /**
- * @hook usePdfThumbnails
- * @description PDF 파일에서 썸네일을 생성하고 상태를 관리하는 커스텀 훅
+ * PDF 파일에서 썸네일을 생성하고 상태를 관리하는 커스텀 훅
  * @param {number} timeoutMs - PDF 로드 타임아웃 (밀리초)
- * @param {number} thumbnailScale - 썸네일 렌더링 스케일
  * @returns {{
  *   thumbnails: Thumbnail[],
  *   loading: boolean,
@@ -15,7 +13,7 @@ import { generatePdfThumbnails, Thumbnail } from "@/utils/pdfUtils";
  *   handleImageClick: (thumbnailUrl: string) => void
  * }}
  */
-export const usePdfThumbnails = (timeoutMs: number, thumbnailScale: number) => {
+export const usePdfThumbnails = (timeoutMs: number) => {
   const [thumbnails, setThumbnails] = useState<Thumbnail[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +26,7 @@ export const usePdfThumbnails = (timeoutMs: number, thumbnailScale: number) => {
     setError(null);
 
     try {
-      const thumbnailList = await generatePdfThumbnails(pdfFile, thumbnailScale, timeoutMs);
+      const thumbnailList = await generatePdfThumbnails(pdfFile, timeoutMs);
       setThumbnails(thumbnailList);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);

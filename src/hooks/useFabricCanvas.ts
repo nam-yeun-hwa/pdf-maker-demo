@@ -5,8 +5,7 @@ import { useSelectedPdfStore } from "@/store/selectedPdfStore";
 import { useCanvasStore } from "@/store/canvasStore";
 
 /**
- * @hook useFabricCanvas
- * @description Fabric.js 캔버스를 초기화하고 PDF 이미지를 로드하는 커스텀 훅
+ * Fabric.js 캔버스를 초기화하고 PDF 이미지를 로드하는 커스텀 훅
  * @param {number} canvasMargin - 캔버스와 컨테이너 간 여백
  * @param {number} heightRatio - 캔버스 높이 비율 (너비 기준)
  * @returns {{ containerRef: React.RefObject<HTMLDivElement>, canvasRef: React.RefObject<HTMLCanvasElement> }}

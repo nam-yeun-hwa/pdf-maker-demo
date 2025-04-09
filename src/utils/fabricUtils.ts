@@ -2,8 +2,7 @@ import * as fabric from "fabric";
 import jsPDF from "jspdf"; // PDF 생성용
 
 /**
- * @function initializeFabricCanvas
- * @description Fabric.js 캔버스를 초기화하고 설정하는 유틸리티 함수
+ * Fabric.js 캔버스를 초기화하고 설정하는 유틸리티 함수
  * @param {HTMLCanvasElement} canvasElement - 캔버스 DOM 요소
  * @param {number} width - 캔버스 너비
  * @param {number} height - 캔버스 높이
@@ -24,8 +23,7 @@ export const initializeFabricCanvas = (
 };
 
 /**
- * @function loadImageToCanvas
- * @description Fabric.js 캔버스에서 이미지를 로드하고 고정된 상태로 추가하는 함수
+ * Fabric.js 캔버스에서 이미지를 로드하고 고정된 상태로 추가하는 함수
  * @param {string} imageUrl - 로드할 이미지의 Base64 URL
  * @param {fabric.Canvas} canvas - Fabric.js 캔버스 인스턴스
  * @param {number} canvasWidth - 캔버스 너비 (이미지 크기 조정 기준)
@@ -189,8 +187,7 @@ export const addStampToCanvas = (
 };
 
 /**
- * @function removeSelectedObject
- * @description 캔버스에서 선택된 객체를 제거합니다.
+ * 캔버스에서 선택된 객체를 제거합니다.
  * @param {fabric.Canvas} canvas - Fabric.js 캔버스 인스턴스
  */
 export const removeSelectedObject = (canvas: fabric.Canvas) => {
@@ -203,8 +200,6 @@ export const removeSelectedObject = (canvas: fabric.Canvas) => {
 };
 
 /**
- * @function downloadPDF
- * @description
  * Fabric.js 캔버스를 PDF 파일로 변환하여 다운로드합니다.
  * 캔버스 높이가 A4 페이지 높이를 초과할 경우 다중 페이지로 나눠 생성합니다.
  *
@@ -282,8 +277,7 @@ export const downloadPDF = (canvas: fabric.Canvas | null) => {
 };
 
 /**
- * @function isImageAlreadyInCanvas
- * @description 캔버스에 특정 이미지 URL이 이미 존재하는지 확인하는 함수
+ * 캔버스에 특정 이미지 URL이 이미 존재하는지 확인하는 함수
  * @param {fabric.Canvas} canvas - Fabric.js 캔버스 인스턴스
  * @param {string} imageUrl - 확인할 이미지 URL
  * @returns {boolean} - 이미지가 존재하면 true, 없으면 false

@@ -14,19 +14,13 @@ export interface Thumbnail {
 }
 
 /**
- * @function generatePdfThumbnails
- * @description PDF 파일에서 썸네일을 생성하는 유틸리티 함수
+ * PDF 파일에서 썸네일을 생성하는 유틸리티 함수
  * @param {File} pdfFile - 업로드된 PDF 파일 객체
- * @param {number} scale - 썸네일 렌더링 스케일 (기본값: 1)
  * @param {number} timeoutMs - PDF 로드 타임아웃 시간 (기본값: 10000ms)
  * @returns {Promise<Thumbnail[]>} 생성된 썸네일 리스트
  * @throws {Error} PDF 처리 중 오류 발생 시
  */
-export const generatePdfThumbnails = async (
-  pdfFile: File,
-  scale: number = 1,
-  timeoutMs: number = 10000
-): Promise<Thumbnail[]> => {
+export const generatePdfThumbnails = async (pdfFile: File, timeoutMs: number = 10000): Promise<Thumbnail[]> => {
   const pdfUrl = URL.createObjectURL(pdfFile);
   const loadingTask = pdfjsLib.getDocument({ url: pdfUrl });
 

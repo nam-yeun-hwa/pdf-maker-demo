@@ -27,7 +27,6 @@ interface FileUploadProps extends ButtonProps {
 }
 
 /**
- * @component FileUpload
  * 숨겨진 파일 입력 요소와 버튼을 결합하여 파일 업로드 기능을 제공하는 컴포넌트입니다.
  * 버튼 클릭 시 파일 선택 창이 열리며, 선택된 파일은 onChange 핸들러로 처리됩니다.
  *
