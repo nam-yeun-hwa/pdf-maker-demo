@@ -278,7 +278,7 @@ export const downloadPDF = (canvas: fabric.Canvas | null) => {
     }
   }
 
-  pdf.save("canvas.pdf");
+  pdf.save("sample.pdf");
 };
 
 /**
