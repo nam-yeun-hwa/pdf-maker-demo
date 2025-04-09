@@ -70,8 +70,8 @@ export const loadImageToCanvas = (
       hasControls: false,
       hasBorders: false,
       data: imageUrl, // 이미지 URL을 객체에 저장하여 중복 확인 가능
-      stroke: "black", // 테두리 색상 (예: 검정색)
-      strokeWidth: 2, // 테두리 두께 (픽셀 단위)
+      // stroke: "black", // 테두리 색상 (예: 검정색)
+      // strokeWidth: 2, // 테두리 두께 (픽셀 단위)
     });
 
     // 기존 객체 유지 확인
@@ -226,21 +226,23 @@ export const downloadPDF = (canvas: fabric.Canvas | null) => {
   const pdfWidth = pdf.internal.pageSize.getWidth(); // PDF 페이지 너비 (mm)
   const pdfHeight = pdf.internal.pageSize.getHeight(); // PDF 페이지 높이 (mm, 약 297mm)
 
+  const topCount = canvas.getObjects().filter((obj) => obj.get("id") === "pdf").length;
+
+  console.log("topCount", topCount);
   // fabric.Canvas의 논리적 너비와 높이
   const canvasWidth = canvas.getWidth();
   const canvasHeight = canvas.getHeight();
-  console.log("canvasWidth", canvasWidth);
-  console.log("canvasHeight", canvasHeight);
+
   // 캔버스 비율을 PDF에 맞춤
-  const aspectRatio = canvasHeight / canvasWidth;
-  const width = pdfWidth; // PDF 너비 기준
+  const canvasGetHeight = pdfHeight * topCount;
+  const aspectRatio = canvasGetHeight / pdfWidth;
   const totalHeight = pdfWidth * aspectRatio; // 캔버스의 전체 높이 (mm 단위로 변환)
   console.log(aspectRatio);
-  console.log(width);
+  console.log(pdfWidth);
   console.log(totalHeight);
   // 단일 페이지로 충분한 경우
   if (totalHeight <= pdfHeight) {
-    pdf.addImage(imgData, "PNG", 0, 0, width, totalHeight);
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, totalHeight);
   } else {
     // 다중 페이지 처리
     let heightLeft = totalHeight;
@@ -250,7 +252,7 @@ export const downloadPDF = (canvas: fabric.Canvas | null) => {
     while (heightLeft > 0) {
       // 현재 페이지에 그릴 이미지 영역 설정
       // const clipHeight = Math.min(pdfHeight, heightLeft);
-      pdf.addImage(imgData, "PNG", 0, position, width, totalHeight, undefined, undefined, {
+      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, totalHeight, undefined, undefined, {
         clip: {
           x: 0,
           y: -position * (canvasHeight / totalHeight), // 캔버스 내 위치 조정
